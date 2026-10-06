@@ -1,11 +1,15 @@
 <script setup lang="ts">
-// 文章信息行 + 过时提醒（挂在 doc-before 插槽，只在板块文章页显示，板块首页 / 投稿 / 关于不显示）
-//   信息行：类型（指南 / 经验帖）、适用年份或届次、作者
-//   过时提醒：指南超过 12 个月没更新或适用年份已是两年前；经验帖距今 2 年及以上
-// “现在几点”只能在浏览器里算（构建时间 ≠ 阅读时间），所以提醒在挂载后才计算，避免服务端渲染不一致
-import { computed, onMounted, ref } from 'vue'
-import { useData } from 'vitepress'
-import { SECTIONS } from '../../sections'
+// 文章页正文上方（挂在 doc-before 插槽，只在板块文章页显示，板块首页 / 投稿 / 关于不显示）
+//   1. 返回板块：「← 保研」，一步回到板块首页（那里有本板块全部文章）；仅 < 960px（无侧栏时）显示
+//   2. 信息行：类型（指南 / 经验帖）、适用年份或届次、作者
+//   3. 过时提醒：指南超过 12 个月没更新或适用年份已是两年前；经验帖距今 2 年及以上
+//   4. 本页目录：可折叠，只在 < 1280px（右侧目录栏不显示时）且有 3 个及以上小标题时出现，
+//      取代默认主题顶栏下方的「菜单 / 本页目录」栏
+// “现在几点”和“页面有哪些标题”只能在浏览器里得到，所以 3、4 在挂载及每次切换文章后计算，
+// 避免服务端渲染不一致；站内跳转时组件会复用，因此不能只在 onMounted 里算一次
+import { computed, ref } from 'vue'
+import { onContentUpdated, useData, withBase } from 'vitepress'
+import { SECTIONS, sectionByKey } from '../../sections'
 
 const { page, frontmatter } = useData()
 
@@ -15,6 +19,7 @@ const isArticle = computed(() => {
   const segs = path.split('/')
   return SECTION_KEYS.has(segs[0]) && !path.endsWith('index.md') && !segs[segs.length - 1].startsWith('_')
 })
+const section = computed(() => (isArticle.value ? sectionByKey(page.value.relativePath.split('/')[0]) : null))
 
 const type = computed(() =>
   frontmatter.value.type === 'experience' || page.value.relativePath.includes('/experiences/') ? 'experience' : 'guide',
@@ -23,7 +28,11 @@ const year = computed(() => Number(frontmatter.value.year) || null)
 const author = computed(() => (frontmatter.value.author ? String(frontmatter.value.author) : ''))
 
 const notice = ref('')
-onMounted(() => {
+const headings = ref<{ id: string; text: string; level: number }[]>([])
+const tocOpen = ref(false)
+
+function computeNotice() {
+  notice.value = ''
   const now = new Date()
   const thisYear = now.getFullYear()
   if (type.value === 'experience') {
@@ -40,26 +49,102 @@ onMounted(() => {
   } else if (year.value && thisYear - year.value >= 2) {
     notice.value = `本文内容适用于 ${year.value} 年，政策、名额与时间节点可能已有变化，请以学校与学院最新通知为准。`
   }
+}
+
+function collectHeadings() {
+  headings.value = [...document.querySelectorAll<HTMLElement>('.VPDoc .vp-doc :is(h2, h3)')]
+    .filter((h) => h.id)
+    .map((h) => ({
+      id: h.id,
+      // 去掉标题末尾自动生成的 # 锚点符号
+      text: (h.firstChild?.textContent || h.textContent || '').replace(/\s*#\s*$/, '').trim(),
+      level: h.tagName === 'H3' ? 3 : 2,
+    }))
+}
+
+onContentUpdated(() => {
+  tocOpen.value = false
+  if (!isArticle.value) return
+  computeNotice()
+  collectHeadings()
 })
 </script>
 
 <template>
   <div v-if="isArticle" class="ArticleMeta">
+    <a v-if="section" class="back" :href="withBase(section.link)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+      {{ section.text }}
+    </a>
+
     <p class="meta">
       <span class="type" :class="type">{{ type === 'experience' ? '经验帖' : '指南' }}</span>
       <span v-if="year">{{ type === 'experience' ? `${year} 届` : `适用于 ${year} 年` }}</span>
       <span v-if="author">作者：{{ author }}</span>
     </p>
+
     <p v-if="notice" class="notice" role="note">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16.5v.01" /></svg>
       <span>{{ notice }}</span>
     </p>
+
+    <details v-if="headings.length >= 3" class="toc" :open="tocOpen" @toggle="tocOpen = ($event.target as HTMLDetailsElement).open">
+      <summary>
+        <span>本页目录</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+      </summary>
+      <ul>
+        <li v-for="h in headings" :key="h.id" :class="{ sub: h.level === 3 }">
+          <a :href="`#${h.id}`" @click="tocOpen = false">{{ h.text }}</a>
+        </li>
+      </ul>
+    </details>
   </div>
 </template>
 
 <style scoped>
 .ArticleMeta {
   margin-bottom: 20px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0 0 12px -4px;
+  padding: 6px 8px 6px 2px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--vp-c-text-2);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+/* 桌面端左侧侧栏常驻（含「板块概览」），不再重复显示 */
+@media (min-width: 960px) {
+  .back {
+    display: none;
+  }
+}
+
+.back:hover {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-default-soft);
+}
+
+.back svg,
+.chev,
+.notice svg {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.back svg {
+  width: 18px;
+  height: 18px;
 }
 
 .meta {
@@ -101,13 +186,79 @@ onMounted(() => {
 }
 
 .notice svg {
-  flex: none;
   width: 18px;
   height: 18px;
   margin-top: 3px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
+}
+
+/* ---------- 可折叠的本页目录 ---------- */
+.toc {
+  margin-top: 16px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+}
+
+/* 宽屏右侧已有目录栏 */
+@media (min-width: 1280px) {
+  .toc {
+    display: none;
+  }
+}
+
+.toc summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  list-style: none;
+}
+
+.toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.chev {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.toc[open] .chev {
+  transform: rotate(180deg);
+}
+
+.toc ul {
+  margin: 0;
+  padding: 4px 14px 10px;
+  list-style: none;
+  border-top: 1px solid var(--vp-c-border);
+}
+
+.toc li a {
+  display: block;
+  padding: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--vp-c-text-2);
+}
+
+.toc li a:hover {
+  color: var(--vp-c-text-1);
+}
+
+.toc li.sub a {
+  padding-left: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chev,
+  .back {
+    transition: none;
+  }
 }
 </style>

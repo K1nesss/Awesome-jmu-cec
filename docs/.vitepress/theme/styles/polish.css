@@ -125,9 +125,58 @@
   background-color: var(--vp-c-default-soft);
 }
 
-/* 移动端抽屉里的「深色模式」开关行 */
+/* 菜单里的「主题」行（手机 ☰ 菜单、平板「…」菜单）：整行都可以点，右侧显示当前模式文字 + 图标。
+   做法：按钮的 ::after 铺满整行（行设为定位参照），点行内任意位置都等于点按钮 */
 .VPNavScreenAppearance {
+  position: relative;
   border: 1px solid var(--vp-c-divider);
+  transition: background-color 0.2s;
+}
+.VPNavScreenAppearance:hover,
+.VPNavScreenAppearance:active {
+  background-color: rgba(250, 249, 245, 0.08);
+}
+.VPNavBarExtra .item.appearance {
+  position: relative;
+  border-radius: 6px;
+}
+.VPNavBarExtra .item.appearance:hover {
+  background-color: var(--vp-c-default-soft);
+}
+.VPNavScreenAppearance .ThemeToggle,
+.VPNavBarExtra .appearance .ThemeToggle {
+  position: static;
+  width: auto;
+  gap: 8px;
+  padding: 0 4px;
+  background: transparent !important;
+  color: var(--vp-c-text-1);
+}
+.VPNavScreenAppearance .ThemeToggle::after,
+.VPNavBarExtra .appearance .ThemeToggle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.VPNavScreenAppearance .ThemeToggle .tt-text,
+.VPNavBarExtra .appearance .ThemeToggle .tt-text {
+  display: inline;
+}
+.VPNavScreenAppearance .ThemeToggle:focus-visible,
+.VPNavBarExtra .appearance .ThemeToggle:focus-visible {
+  outline: none;
+}
+.VPNavScreenAppearance:has(.ThemeToggle:focus-visible),
+.VPNavBarExtra .item.appearance:has(.ThemeToggle:focus-visible) {
+  outline: 2px solid #faf9f5;
+  outline-offset: 2px;
+}
+
+/* 不使用默认主题顶栏下方的「菜单 / 本页目录」栏（手机与平板）：
+   本板块文章移到 ☰ 菜单（SectionNav.vue），本页目录移到文章标题上方的可折叠列表（ArticleMeta.vue） */
+.VPLocalNav {
+  display: none !important;
 }
 
 /* ---------- 2. 首页 ---------- */

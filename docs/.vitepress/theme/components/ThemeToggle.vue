@@ -39,6 +39,12 @@ function cycle() {
 
 <template>
   <button type="button" class="ThemeToggle" :title="title" :aria-label="title" @click="cycle">
+    <!-- 当前模式文字：只在菜单里的「主题」行显示（顶栏里只显示图标），见 polish.css -->
+    <span class="tt-text" aria-hidden="true">
+      <span class="tt-text-auto">跟随系统</span>
+      <span class="tt-text-light">浅色</span>
+      <span class="tt-text-dark">深色</span>
+    </span>
     <!-- 跟随系统：显示器 -->
     <svg class="icon tt-auto" viewBox="0 0 24 24" aria-hidden="true">
       <rect x="3" y="4" width="18" height="12" rx="2" />
@@ -82,6 +88,24 @@ function cycle() {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* 文字标签默认隐藏；三段文字与图标一样按 <html data-theme-mode> 显示其一（避免首屏闪烁与 SSR 不一致） */
+.tt-text {
+  display: none;
+  font-size: 14px;
+}
+
+.tt-text-light,
+.tt-text-dark,
+:global(html[data-theme-mode='light'] .ThemeToggle .tt-text-auto),
+:global(html[data-theme-mode='dark'] .ThemeToggle .tt-text-auto) {
+  display: none;
+}
+
+:global(html[data-theme-mode='light'] .ThemeToggle .tt-text-light),
+:global(html[data-theme-mode='dark'] .ThemeToggle .tt-text-dark) {
+  display: inline;
 }
 
 /* 默认（属性尚未写入时）显示「跟随系统」 */
