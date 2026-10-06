@@ -1,0 +1,15 @@
+# 依赖自动更新：actions 每周、npm 每月分组（字体归一组）（PLAN.md §8.4）
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      fonts:
+        patterns:
+          - "@fontsource*"

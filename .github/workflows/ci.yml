@@ -1,0 +1,19 @@
+# PR 门禁：校验 + 构建（不部署），红色即拦截合并（PLAN.md §8.3）
+# 死链、Markdown/Vue 语法错、构建失败会给出文件 + 行号，坏改动永远到不了 main
+name: CI
+on:
+  pull_request:
+permissions: { contents: read }
+concurrency: { group: ${{ github.ref }}, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: node scripts/verify-build.mjs
