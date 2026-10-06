@@ -1,36 +1,58 @@
 <script setup lang="ts">
-// 明暗切换：图标按钮，替换默认主题的滑块开关（通过 config.mts 的 vite alias 覆盖 VPSwitchAppearance.vue）
-// 初始跟随系统（appearance: true → 'auto'）；手动切换后记住选择，切回与系统一致时自动恢复“跟随系统”
-import { inject, ref, watchPostEffect } from 'vue'
-import { useData } from 'vitepress'
+// 主题切换：三态图标按钮「跟随系统 → 浅色 → 深色 → 跟随系统」
+// 覆盖默认主题的 VPSwitchAppearance.vue（见 config.mts 的 vite alias），顶栏、「…」菜单、手机抽屉三处共用。
+//
+// 与 VitePress 的明暗状态如何同步：
+//   VitePress 用 @vueuse/core 的 useDark 把选择存在 localStorage['vitepress-theme-appearance']（auto/light/dark）。
+//   这里用同一个 key 的 useColorMode 写入，vueuse 会在同一页面内广播存储变更，VitePress 的 isDark 随之更新。
+//   不能直接改 isDark：它在“所选模式恰好等于系统模式”时会存成 auto，选了「浅色」刷新后又变回「跟随系统」。
+//
+// 首屏不闪：config.mts 的 head 内联脚本在渲染前把当前模式写到 <html data-theme-mode>，
+// 三个图标都渲染、由 CSS 按该属性显示其一，服务端渲染与客户端结果一致。
+import { computed, watchEffect } from 'vue'
+import { useColorMode } from '@vueuse/core'
 
-const { isDark, theme } = useData()
+type Mode = 'auto' | 'light' | 'dark'
 
-// 默认主题在 Layout 中 provide 了带过渡动画的切换函数，拿不到时直接翻转
-const toggleAppearance = inject('toggle-appearance', () => {
-  isDark.value = !isDark.value
+const STORAGE_KEY = 'vitepress-theme-appearance'
+const ORDER: Mode[] = ['auto', 'light', 'dark']
+const LABEL: Record<Mode, string> = { auto: '跟随系统', light: '浅色', dark: '深色' }
+
+const { store } = useColorMode({
+  storageKey: STORAGE_KEY,
+  initialValue: 'auto',
+  modes: { dark: 'dark', light: '' },
 })
 
-const title = ref('')
-watchPostEffect(() => {
-  title.value = isDark.value
-    ? theme.value.lightModeSwitchTitle || '切换到浅色模式'
-    : theme.value.darkModeSwitchTitle || '切换到深色模式'
+const mode = computed<Mode>(() => (ORDER.includes(store.value as Mode) ? (store.value as Mode) : 'auto'))
+const next = computed<Mode>(() => ORDER[(ORDER.indexOf(mode.value) + 1) % ORDER.length])
+const title = computed(() => `主题：${LABEL[mode.value]}（点击切换为${LABEL[next.value]}）`)
+
+watchEffect(() => {
+  if (typeof document !== 'undefined') document.documentElement.dataset.themeMode = mode.value
 })
+
+function cycle() {
+  store.value = next.value
+}
 </script>
 
 <template>
-  <button
-    type="button"
-    class="ThemeToggle"
-    :title="title"
-    :aria-label="title"
-    :aria-pressed="isDark"
-    @click="toggleAppearance"
-  >
-    <!-- 两个图标都渲染、用 .dark 类切换显示，避免服务端渲染与首屏系统主题不一致导致闪烁 -->
-    <span class="vpi-sun icon sun" aria-hidden="true" />
-    <span class="vpi-moon icon moon" aria-hidden="true" />
+  <button type="button" class="ThemeToggle" :title="title" :aria-label="title" @click="cycle">
+    <!-- 跟随系统：显示器 -->
+    <svg class="icon tt-auto" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <path d="M8 20h8M12 16v4" />
+    </svg>
+    <!-- 浅色：太阳 -->
+    <svg class="icon tt-light" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+    <!-- 深色：月亮 -->
+    <svg class="icon tt-dark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.7 6.7 0 0 0 10.7 10.7z" />
+    </svg>
   </button>
 </template>
 
@@ -52,16 +74,25 @@ watchPostEffect(() => {
 }
 
 .icon {
+  display: none;
   width: 18px;
   height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.moon,
-:global(.dark) .sun {
+/* 默认（属性尚未写入时）显示「跟随系统」 */
+.tt-auto,
+:global(html[data-theme-mode='light'] .ThemeToggle .tt-light),
+:global(html[data-theme-mode='dark'] .ThemeToggle .tt-dark) {
+  display: block;
+}
+
+:global(html[data-theme-mode='light'] .ThemeToggle .tt-auto),
+:global(html[data-theme-mode='dark'] .ThemeToggle .tt-auto) {
   display: none;
-}
-
-:global(.dark) .moon {
-  display: inline-block;
 }
 </style>

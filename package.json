@@ -13,6 +13,7 @@
     "preview": "vitepress preview docs"
   },
   "devDependencies": {
+    "@vueuse/core": "^12.8.2",
     "gray-matter": "^4.0.3",
     "vitepress": "1.6.4"
   }

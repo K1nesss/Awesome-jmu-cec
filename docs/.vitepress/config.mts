@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig, type DefaultTheme } from 'vitepress'
+import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
+import { SECTIONS } from './sections'
 
 // 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
@@ -8,17 +9,6 @@ import { cjkTokenize } from './search/cjkTokenize.mjs'
 export const BASE = '/'
 
 const REPO = 'https://github.com/K1nesss/Awesome-jmu-cec'
-
-// 板块清单：唯一真源。顶栏「板块」下拉由此生成；新增顶级板块时只改这里 + 首页卡片
-export const SECTIONS: DefaultTheme.NavItemWithLink[] = [
-  { text: '大学四年规划', link: '/planning/' },
-  { text: '竞赛', link: '/competitions/' },
-  { text: '保研', link: '/baoyan/' },
-  { text: '考公·选调', link: '/kaogong/' },
-  { text: '留学', link: '/abroad/' },
-  { text: '奖学金', link: '/scholarship/' },
-  { text: '校园信息差', link: '/campus/' },
-]
 
 export default defineConfig({
   title: 'Awesome JMU CEC',
@@ -32,11 +22,17 @@ export default defineConfig({
 
   vite: {
     resolve: {
-      // 用图标按钮替换默认主题的明暗滑块开关（VitePress 官方支持的“覆盖内部组件”方式）
+      // 覆盖默认主题的内部组件（VitePress 官方支持的方式）：
+      // - VPSwitchAppearance：明暗滑块 → 三态主题图标按钮（跟随系统 / 浅色 / 深色）
+      // - VPFlyout：顶栏下拉 → 只在点击时展开，箭头带旋转动画
       alias: [
         {
           find: /^.*\/VPSwitchAppearance\.vue$/,
           replacement: fileURLToPath(new URL('./theme/components/ThemeToggle.vue', import.meta.url)),
+        },
+        {
+          find: /^.*\/VPFlyout\.vue$/,
+          replacement: fileURLToPath(new URL('./theme/components/NavFlyout.vue', import.meta.url)),
         },
       ],
     },
@@ -46,6 +42,12 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }],
     ['meta', { name: 'theme-color', content: '#1f1e1d' }],
+    // 首屏渲染前写入当前主题模式（auto/light/dark），主题按钮据此显示对应图标，避免闪烁（见 ThemeToggle.vue）
+    [
+      'script',
+      {},
+      `(()=>{let m='auto';try{m=localStorage.getItem('vitepress-theme-appearance')||'auto'}catch(e){}document.documentElement.dataset.themeMode=m})()`,
+    ],
   ],
 
   markdown: {
@@ -99,7 +101,11 @@ export default defineConfig({
 
     nav: [
       { text: '首页', link: '/' },
-      { text: '板块', items: SECTIONS, activeMatch: `^/(${SECTIONS.map((s) => s.link.slice(1, -1)).join('|')})/` },
+      {
+        text: '板块',
+        items: SECTIONS.map(({ text, link }) => ({ text, link })),
+        activeMatch: `^/(${SECTIONS.map((s) => s.link.slice(1, -1)).join('|')})/`,
+      },
       { text: '投稿', link: '/contribute/' },
       { text: '关于', link: '/about/' },
     ],
@@ -124,7 +130,7 @@ export default defineConfig({
     },
     returnToTopLabel: '回到顶部',
     sidebarMenuLabel: '菜单',
-    darkModeSwitchLabel: '深色模式',
+    darkModeSwitchLabel: '主题',
     lightModeSwitchTitle: '切换到浅色模式',
     darkModeSwitchTitle: '切换到深色模式',
     skipToContentLabel: '跳到正文',

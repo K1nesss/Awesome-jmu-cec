@@ -223,8 +223,10 @@ html.dark[data-accent='terracotta'] { --accent-ink:#E08A6A; --accent-strong:#D97
 - **底色**：米白 `#FAF9F5`；深色 `#262624`
 - **字体**：全站 PingFang SC（mac）+ 微软雅黑（Windows），零字体下载（已删除全部 fontsource 自托管字体，依赖降至 2 个：vitepress + gray-matter）
 - **强调色**：黑白灰无彩色——链接深灰 `#4A4842`、按钮纯黑 `#1F1E1D`（深色模式链接浅灰、按钮反白）
-- **首页**：只留 8 张板块卡片（圆角细边框，hover 边框变黑），无 hero 大标题
-- **无主题色切换**：AccentSwitcher 组件与防闪脚本已删除；主题文件简化为 `theme/index.ts`（直接导出默认主题）+ 3 个 CSS
+- **首页（2026-10 重做）**：`layout: page` + `theme/components/HomePage.vue`——开场标题 + 大搜索入口 → 「四年路线」（大一至大四超大字号四栏，每栏 2-3 条要点 + 相关板块链接，本页视觉重心）→ 全部板块目录（双栏细线列表）→ 黑色投稿色带。板块清单唯一真源为 `docs/.vitepress/sections.ts`（顶栏下拉与首页共用）
+- **无主题色切换**：AccentSwitcher 组件已删除
+- **明暗切换（2026-10）**：三态图标按钮「跟随系统 → 浅色 → 深色」（`ThemeToggle.vue`，vite alias 覆盖 `VPSwitchAppearance.vue`），初始跟随系统；与 VitePress 共用 localStorage `vitepress-theme-appearance`，经 `@vueuse/core` 的 useColorMode 同步；head 内联脚本写 `<html data-theme-mode>` 防图标闪烁
+- **顶栏下拉（2026-10）**：`NavFlyout.vue` 覆盖 `VPFlyout.vue`，只在点击时展开、箭头旋转动画、点外部 / Esc / 切页自动收起；「板块」菜单在按钮正下方居中
 - **实现方式（2026-10 重构）**：顶栏不再逐组件写字面量 + `!important`（旧写法漏掉了「板块」下拉按钮文字、「…」更多菜单与移动端抽屉开关，且搜索框固定 200px 在手机上撑出横向滚动）。改为在 `.VPNav` 上整体重定义一套“黑底浅字”配色令牌，顶栏内所有子组件自动跟随；菜单居中仅在 ≥1024px 生效，搜索框紧凑宽度仅在 ≥768px 生效。页面级变量覆盖仍用 `html:root` / `html.dark`；首页卡片规则需加一层 `.VPFeatures` 才能压过默认主题的 scoped 样式
 
 ---

@@ -46,9 +46,6 @@ html:root {
   --vp-nav-screen-bg-color: #1f1e1d;
 
   /* 本站自定义令牌 */
-  --jc-radius: 12px;
-  --jc-card-bg: var(--vp-c-bg-elv);
-  --jc-card-hover-border: #1f1e1d;
   --jc-focus-ring: #1f1e1d;
 }
 
@@ -78,7 +75,5 @@ html.dark {
   --vp-button-brand-active-text: #1f1e1d;
   --vp-local-search-highlight-bg: rgba(240, 238, 230, 0.12);
 
-  --jc-card-bg: #2c2c2a;
-  --jc-card-hover-border: #f0eee6;
   --jc-focus-ring: #f0eee6;
 }

@@ -106,12 +106,12 @@
   }
 }
 
-/* 「板块」下拉菜单：默认主题让菜单右对齐按钮，改为在按钮正下方居中。
-   transform 需要 !important，因为默认主题在展开/收起两种状态下都会改写 transform */
+/* 「板块」下拉菜单：默认右对齐按钮，改为在按钮正下方居中。
+   用独立的 translate 属性居中，不占用 NavFlyout.vue 里做展开动画的 transform */
 .VPNavBarMenuGroup .menu {
   right: auto;
   left: 50%;
-  transform: translateX(-50%) !important;
+  translate: -50% 0;
 }
 
 /* 下拉菜单里的当前板块 */
@@ -125,32 +125,7 @@
 }
 
 /* ---------- 2. 首页 ---------- */
-/* 首页无 hero：给卡片区留出与顶栏的呼吸距离（旧版卡片紧贴顶栏下沿） */
-.VPHome {
-  padding-top: 48px;
-}
-@media (min-width: 960px) {
-  .VPHome { padding-top: 72px; }
-}
-
-/* 选择器加一层 .VPFeatures，才能压过默认主题带 scoped 属性的同名规则 */
-.VPFeatures .VPFeature {
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--jc-radius);
-  background-color: var(--jc-card-bg);
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-}
-.VPFeatures .VPFeature.link:hover {
-  border-color: var(--jc-card-hover-border);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(31, 30, 29, 0.06);
-}
-.VPFeatures .VPFeature .title {
-  font-size: 17px;
-}
-.VPFeatures .VPFeature .details {
-  font-weight: 400;
-}
+/* 首页样式全部在 theme/components/HomePage.vue 内 */
 
 /* ---------- 3. 正文页 ---------- */
 .vp-doc a {
@@ -185,10 +160,3 @@
   outline-color: #faf9f5;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .VPFeatures .VPFeature,
-  .VPFeatures .VPFeature.link:hover {
-    transition: none;
-    transform: none;
-  }
-}
