@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // 文章页正文上方（挂在 doc-before 插槽，只在板块文章页显示，板块首页 / 投稿 / 关于不显示）
 //   1. 返回板块：「← 保研」，一步回到板块首页（那里有本板块全部文章）；仅 < 960px（无侧栏时）显示
-//   2. 信息行：类型（指南 / 经验帖）、适用年份或届次、作者
+//   2. 信息行：类型（指南 / 经验帖）、适用年份或届次、作者、预计阅读时间；右侧「复制链接」（方便转发到微信 / QQ 群）
 //   3. 过时提醒：指南超过 12 个月没更新或适用年份已是两年前；经验帖距今 2 年及以上
 //   4. 本页目录：可折叠，只在 < 1280px（右侧目录栏不显示时）且有 3 个及以上小标题时出现，
 //      取代默认主题顶栏下方的「菜单 / 本页目录」栏
 // “现在几点”和“页面有哪些标题”只能在浏览器里得到，所以 3、4 在挂载及每次切换文章后计算，
 // 避免服务端渲染不一致；站内跳转时组件会复用，因此不能只在 onMounted 里算一次
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { onContentUpdated, useData, withBase } from 'vitepress'
 import { SECTIONS, sectionByKey } from '../../sections'
 
@@ -30,6 +30,51 @@ const author = computed(() => (frontmatter.value.author ? String(frontmatter.val
 const notice = ref('')
 const headings = ref<{ id: string; text: string; level: number }[]>([])
 const tocOpen = ref(false)
+const minutes = ref(0)
+const copied = ref(false)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+
+// 预计阅读时间：中文按每分钟约 400 字、英文按每分钟约 200 词估算
+function computeReadingTime() {
+  const text = document.querySelector<HTMLElement>('.VPDoc .vp-doc')?.innerText || ''
+  const cjk = (text.match(/[\u3400-\u9fff\uf900-\ufaff]/g) || []).length
+  const words = (text.replace(/[\u3400-\u9fff\uf900-\ufaff]/g, ' ').match(/[A-Za-z0-9]+/g) || []).length
+  minutes.value = Math.max(1, Math.round(cjk / 400 + words / 200))
+}
+
+// 折叠目录里的跳转：先收起目录再滚动——否则收起会让页面上移，标题被顶出屏幕
+async function goTo(id: string) {
+  tocOpen.value = false
+  await nextTick()
+  const el = document.getElementById(id)
+  if (!el) return
+  // 顶栏在 ≥960px 时固定在顶部，需要额外留出它的高度
+  const navFixed = window.matchMedia('(min-width: 960px)').matches
+  const top = el.getBoundingClientRect().top + window.scrollY - (navFixed ? 64 : 0) - 16
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  window.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
+  history.replaceState(history.state, '', `#${encodeURIComponent(id)}`)
+}
+
+// 复制当前文章链接（不带页内锚点）；剪贴板 API 不可用时退回旧方法
+async function copyLink() {
+  const url = location.href.split('#')[0]
+  try {
+    await navigator.clipboard.writeText(url)
+  } catch {
+    const ta = document.createElement('textarea')
+    ta.value = url
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand('copy')
+    ta.remove()
+  }
+  copied.value = true
+  clearTimeout(copiedTimer)
+  copiedTimer = setTimeout(() => (copied.value = false), 2000)
+}
 
 function computeNotice() {
   notice.value = ''
@@ -65,8 +110,10 @@ function collectHeadings() {
 onContentUpdated(() => {
   tocOpen.value = false
   if (!isArticle.value) return
+  copied.value = false
   computeNotice()
   collectHeadings()
+  computeReadingTime()
 })
 </script>
 
@@ -81,6 +128,15 @@ onContentUpdated(() => {
       <span class="type" :class="type">{{ type === 'experience' ? '经验帖' : '指南' }}</span>
       <span v-if="year">{{ type === 'experience' ? `${year} 届` : `适用于 ${year} 年` }}</span>
       <span v-if="author">作者：{{ author }}</span>
+      <span v-if="minutes">约 {{ minutes }} 分钟读完</span>
+      <button type="button" class="copy" :class="{ done: copied }" @click="copyLink">
+        <svg v-if="!copied" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </svg>
+        <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+        <span aria-live="polite">{{ copied ? '已复制' : '复制链接' }}</span>
+      </button>
     </p>
 
     <p v-if="notice" class="notice" role="note">
@@ -93,9 +149,10 @@ onContentUpdated(() => {
         <span>本页目录</span>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
       </summary>
-      <ul>
+      <!-- vp-raw：让 VitePress 路由不接管这些锚点（它会在目录收起前就算好滚动位置），由 goTo 处理 -->
+      <ul class="vp-raw">
         <li v-for="h in headings" :key="h.id" :class="{ sub: h.level === 3 }">
-          <a :href="`#${h.id}`" @click="tocOpen = false">{{ h.text }}</a>
+          <a :href="`#${h.id}`" @click.prevent="goTo(h.id)">{{ h.text }}</a>
         </li>
       </ul>
     </details>
@@ -132,6 +189,7 @@ onContentUpdated(() => {
 }
 
 .back svg,
+.copy svg,
 .chev,
 .notice svg {
   flex: none;
@@ -163,6 +221,33 @@ onContentUpdated(() => {
   border-radius: 4px;
   font-weight: 600;
   color: var(--vp-c-text-1);
+}
+
+/* 复制链接：推到信息行最右侧 */
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.copy:hover {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-default-soft);
+}
+
+.copy.done {
+  color: var(--vp-c-text-1);
+}
+
+.copy svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* 经验帖用实心标签与指南区分（不靠颜色，靠填充） */

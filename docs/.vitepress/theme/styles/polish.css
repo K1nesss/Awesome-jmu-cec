@@ -125,7 +125,7 @@
   background-color: var(--vp-c-default-soft);
 }
 
-/* 菜单里的「主题」行（手机 ☰ 菜单、平板「…」菜单）：整行都可以点，右侧显示当前模式文字 + 图标。
+/* 菜单里的「主题」行（手机 ☰ 菜单、平板「…」菜单）：整行都可以点，右侧是当前模式图标。
    做法：按钮的 ::after 铺满整行（行设为定位参照），点行内任意位置都等于点按钮 */
 .VPNavScreenAppearance {
   position: relative;
@@ -158,10 +158,6 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-}
-.VPNavScreenAppearance .ThemeToggle .tt-text,
-.VPNavBarExtra .appearance .ThemeToggle .tt-text {
-  display: inline;
 }
 .VPNavScreenAppearance .ThemeToggle:focus-visible,
 .VPNavBarExtra .appearance .ThemeToggle:focus-visible {
@@ -211,6 +207,77 @@
   white-space: nowrap;
 }
 
+/* 上一篇 / 下一篇：手机上也并排一行（默认主题在 < 640px 时上下堆叠）；
+   标题最多两行；悬停时箭头朝对应方向轻推一下 */
+.VPDocFooter .prev-next {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 12px;
+}
+.VPDocFooter .pager-link {
+  padding: 10px 14px 12px;
+}
+.VPDocFooter .pager-link .title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--vp-c-text-1);
+}
+.VPDocFooter .pager-link:hover {
+  border-color: var(--vp-c-text-1);
+}
+.VPDocFooter .pager-link .desc::before,
+.VPDocFooter .pager-link .desc::after {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.VPDocFooter .pager-link.prev .desc::before {
+  content: '←';
+  margin-right: 4px;
+}
+.VPDocFooter .pager-link.next .desc::after {
+  content: '→';
+  margin-left: 4px;
+}
+.VPDocFooter .pager-link.prev:hover .desc::before {
+  transform: translateX(-3px);
+}
+.VPDocFooter .pager-link.next:hover .desc::after {
+  transform: translateX(3px);
+}
+
+/* 跳转到小标题后的短暂高亮（ReadingAids.vue 添加 .jc-flash） */
+@keyframes jc-flash {
+  0%,
+  30% {
+    background-color: var(--vp-c-brand-soft);
+    box-shadow: 0 0 0 8px var(--vp-c-brand-soft);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+.vp-doc .jc-flash {
+  border-radius: 4px;
+  animation: jc-flash 1.5s ease-out;
+}
+
+/* 主题切换的“扩散”过渡（ThemeToggle.vue）：关闭浏览器默认的交叉淡入，由脚本控制裁剪动画 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* 选中文字的颜色与全站黑白灰一致 */
+::selection {
+  background: rgba(31, 30, 29, 0.16);
+}
+.dark ::selection {
+  background: rgba(240, 238, 230, 0.24);
+}
+
 /* ---------- 无障碍 ---------- */
 :focus-visible {
   outline: 2px solid var(--jc-focus-ring);
@@ -220,3 +287,9 @@
   outline-color: #faf9f5;
 }
 
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc .jc-flash { animation: none; }
+  .VPDocFooter .pager-link .desc::before,
+  .VPDocFooter .pager-link .desc::after { transition: none; }
+}

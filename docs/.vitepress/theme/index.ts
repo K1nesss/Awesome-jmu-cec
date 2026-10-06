@@ -5,6 +5,7 @@ import HomePage from './components/HomePage.vue'
 import ArticleList from './components/ArticleList.vue'
 import ArticleMeta from './components/ArticleMeta.vue'
 import SectionNav from './components/SectionNav.vue'
+import ReadingAids from './components/ReadingAids.vue'
 import './styles/vars.css'
 import './styles/fonts.css'
 import './styles/polish.css'
@@ -18,6 +19,8 @@ export default {
       'doc-before': () => h(ArticleMeta),
       // 手机菜单（☰）顶部：本板块文章列表
       'nav-screen-content-before': () => h(SectionNav),
+      // 全站：回到顶部（带阅读进度环）、锚点跳转高亮
+      'layout-bottom': () => h(ReadingAids),
     }),
   enhanceApp({ app }) {
     app.component('HomePage', HomePage) // 首页
