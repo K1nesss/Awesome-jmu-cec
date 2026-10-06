@@ -98,6 +98,8 @@
     flex-grow: 0 !important;
     padding-left: 0 !important;
   }
+}
+@media (min-width: 1280px) {
   .VPNavBarSearch .DocSearch-Button {
     width: 200px;
     border: 1px solid var(--vp-c-border);
@@ -118,6 +120,40 @@
   right: auto;
   left: 50%;
   translate: -50% 0;
+}
+
+/* 中等宽度（768–1279px）：三个大类的名称较长，空间不够同时放下完整搜索框。
+   此区间内：搜索框收成图标按钮、菜单项间距收紧、隐藏「首页」（左侧站名本身就链接到首页） */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .VPNavBarMenu .VPNavBarMenuLink,
+  .VPNavBarMenu .VPFlyout .button {
+    padding: 0 8px;
+  }
+  .VPNavBarMenu .VPNavBarMenuLink[href="/"] {
+    display: none;
+  }
+  .VPNavBarSearch .DocSearch-Button {
+    justify-content: center;
+    width: 40px;
+    padding: 0;
+    border-color: transparent;
+    background: transparent;
+  }
+  .VPNavBarSearch .DocSearch-Button:hover {
+    border-color: transparent;
+    background: var(--vp-c-default-soft);
+  }
+  .VPNavBarSearch .DocSearch-Button-Placeholder,
+  .VPNavBarSearch .DocSearch-Button-Keys {
+    display: none !important;
+  }
+  .VPNavBarSearch .DocSearch-Button .DocSearch-Search-Icon {
+    top: 0;
+    margin-right: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--vp-c-text-1);
+  }
 }
 
 /* 下拉菜单里的当前板块 */
@@ -194,6 +230,10 @@
 .vp-doc .custom-block.tip,
 .vp-doc .custom-block.info {
   border: 1px solid var(--vp-c-border);
+}
+.vp-doc .custom-block.warning {
+  border: 1px solid var(--vp-c-border);
+  border-left: 3px solid var(--vp-c-text-1);
 }
 
 /* 搜索弹窗：去掉浏览器自带的蓝色清除按钮（弹窗已有自己的“清空搜索”按钮） */

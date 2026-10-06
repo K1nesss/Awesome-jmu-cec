@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
-import { SECTIONS } from './sections'
+import { GROUPS, SECTIONS } from './sections'
 import { genSidebar } from '../../scripts/gen-sidebar.mjs'
 
 // 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
@@ -13,7 +13,7 @@ const REPO = 'https://github.com/K1nesss/Awesome-jmu-cec'
 
 export default defineConfig({
   title: 'Awesome JMU CEC',
-  description: '面向集美大学计算机工程学院本科生的信息差百科：大学四年规划、竞赛、保研、考公、留学、奖学金。',
+  description: '面向集美大学计算机工程学院本科生的信息差百科：学院与导师、四年规划、竞赛、保研、考研、就业、考公、留学。',
   lang: 'zh-Hans',
   base: BASE,
   cleanUrls: true,
@@ -102,11 +102,12 @@ export default defineConfig({
 
     nav: [
       { text: '首页', link: '/' },
-      {
-        text: '板块',
-        items: SECTIONS.map(({ text, link }) => ({ text, link })),
-        activeMatch: `^/(${SECTIONS.map((s) => s.link.slice(1, -1)).join('|')})/`,
-      },
+      // 三个大类各一个下拉菜单（sections.ts）；当前页面所在大类的按钮带下划线
+      ...GROUPS.map((g) => ({
+        text: g.navText,
+        items: g.sections.map(({ text, link }) => ({ text, link })),
+        activeMatch: `^/(${g.sections.map((x) => x.key).join('|')})/`,
+      })),
       { text: '投稿', link: '/contribute/' },
       { text: '关于', link: '/about/' },
     ],

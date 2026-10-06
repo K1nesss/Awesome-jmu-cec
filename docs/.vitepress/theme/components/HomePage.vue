@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // 首页（docs/index.md 使用 layout: page 并只渲染本组件）
-// 结构：开场 + 搜索入口 → 四年路线（本页的视觉重心）→ 全部板块目录 → 投稿号召
+// 结构：开场 + 搜索入口 → 四年路线（本页的视觉重心）→ 全部板块目录（按三个大类分栏）→ 投稿号召
 import { withBase } from 'vitepress'
-import { SECTIONS, sectionByKey } from '../../sections'
+import { GROUPS, sectionByKey } from '../../sections'
 
 interface Stage {
   year: string
@@ -17,25 +17,25 @@ const STAGES: Stage[] = [
     year: '大一',
     theme: '适应节奏，打好基础',
     points: ['弄清培养方案和毕业学分要求', '数学、程序设计等基础课决定了绩点的底子', '了解综合测评与奖学金怎么评'],
-    links: ['planning', 'scholarship', 'campus'],
+    links: ['college', 'planning', 'academics', 'scholarship'],
   },
   {
     year: '大二',
     theme: '试方向，攒经历',
     points: ['参加第一个竞赛或项目，找到感兴趣的方向', '考虑转专业、辅修的同学留意时间节点', '着手准备英语四六级'],
-    links: ['competitions', 'campus'],
+    links: ['competitions', 'mentors', 'academics'],
   },
   {
     year: '大三',
     theme: '做选择，提前准备',
     points: ['在保研、考研、考公、留学、就业之间做决定', '保研看排名与夏令营，留学准备语言考试', '争取第一份实习'],
-    links: ['baoyan', 'abroad', 'kaogong'],
+    links: ['baoyan', 'kaoyan', 'career', 'abroad', 'kaogong'],
   },
   {
     year: '大四',
     theme: '落实去向，完成收尾',
     points: ['推免、研究生考试、公务员考试与留学申请陆续进行', '完成毕业设计', '把经验写下来，留给下一届'],
-    links: ['baoyan', 'kaogong'],
+    links: ['kaoyan', 'career', 'kaogong'],
   },
 ]
 
@@ -52,7 +52,7 @@ function openSearch() {
       <div class="wrap">
         <h1 class="headline">大学四年，<br />少走一点弯路。</h1>
         <p class="lede">
-          竞赛、保研、考公、留学、奖学金——学长学姐踩过的坑和摸清的门道，整理成可以搜索的文章。面向集美大学计算机工程学院本科生。
+          导师与科研、竞赛、保研、考研、求职——学长学姐踩过的坑和摸清的门道，整理成可以搜索的文章。面向集美大学计算机工程学院本科生。
         </p>
         <button type="button" class="search" @click="openSearch">
           <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -88,14 +88,20 @@ function openSearch() {
     <section class="directory" aria-labelledby="dir-title">
       <div class="wrap">
         <h2 id="dir-title" class="section-title">全部板块</h2>
-        <ul class="dir-list">
-          <li v-for="s in SECTIONS" :key="s.key">
-            <a class="dir-item" :href="withBase(s.link)">
-              <span class="dir-name">{{ s.text }}</span>
-              <span class="dir-desc">{{ s.desc }}</span>
-            </a>
-          </li>
-        </ul>
+        <div class="groups">
+          <section v-for="g in GROUPS" :key="g.key" class="group" :aria-labelledby="`group-${g.key}`">
+            <h3 :id="`group-${g.key}`" class="group-title">{{ g.text }}</h3>
+            <p class="group-desc">{{ g.desc }}</p>
+            <ul class="dir-list">
+              <li v-for="s in g.sections" :key="s.key">
+                <a class="dir-item" :href="withBase(s.link)">
+                  <span class="dir-name">{{ s.text }}</span>
+                  <span class="dir-desc">{{ s.desc }}</span>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -338,30 +344,54 @@ function openSearch() {
   border-top: 1px solid var(--home-rule);
 }
 
-.dir-list {
+/* 三个大类：桌面三栏，平板及以下上下排列 */
+.groups {
   display: grid;
   grid-template-columns: 1fr;
-  column-gap: 48px;
+  gap: 40px;
+}
+
+@media (min-width: 960px) {
+  .groups {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+  }
+}
+
+.group-title {
+  margin: 0;
+  padding-top: 14px;
+  border-top: 3px solid var(--home-ink);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--home-ink);
+}
+
+.group-desc {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  color: var(--vp-c-text-3);
+}
+
+.dir-list {
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--home-rule);
-}
-
-@media (min-width: 768px) {
-  .dir-list { grid-template-columns: repeat(2, 1fr); border-top: none; }
-  .dir-list li:nth-child(-n + 2) { border-top: 1px solid var(--home-rule); }
 }
 
 .dir-list li {
   border-bottom: 1px solid var(--home-rule);
 }
 
+.dir-list li:last-child {
+  border-bottom: none;
+}
+
 .dir-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 18px 0;
+  padding: 14px 0;
   color: inherit;
 }
 

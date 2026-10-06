@@ -28,7 +28,7 @@ description: 把你的经验写下来：在 GitHub 网页上新建一个 Markdow
 
 1. 注册并登录 [GitHub](https://github.com/)。
 2. 打开模板，复制全部内容：[指南模板](https://github.com/K1nesss/Awesome-jmu-cec/blob/main/templates/guide.md)、[经验帖模板](https://github.com/K1nesss/Awesome-jmu-cec/blob/main/templates/experience.md)。
-3. 打开本站仓库的 [`docs` 目录](https://github.com/K1nesss/Awesome-jmu-cec/tree/main/docs)，进入你要投稿的板块文件夹（例如保研是 `baoyan`）。
+3. 打开本站仓库的 [`docs` 目录](https://github.com/K1nesss/Awesome-jmu-cec/tree/main/docs)，进入你要投稿的板块文件夹（例如保研是 `baoyan`，完整对照见文末）。
 4. 点击右上角 **Add file → Create new file**，文件名用英文或拼音，以 `.md` 结尾，例如 `xia-ling-ying.md`。经验帖在文件名前加上 `experiences/`，例如 `experiences/2026-xiaoming.md`，GitHub 会自动建好子目录。
 5. 粘贴模板，改成你的内容。
 6. 点击 **Commit changes**，按提示提交 Pull Request。维护者审核通过后，文章会自动上线，并出现在板块首页和左侧目录里。
@@ -63,4 +63,29 @@ description: 把你的经验写下来：在 GitHub 网页上新建一个 Markdow
 - **只写自己确认过的信息**：不确定的内容请标明「据了解」，并尽量附上学院通知或官方链接。
 - **保护隐私**：不要出现他人的姓名、学号、联系方式或聊天截图。
 - **一篇只讲一件事**：太短（几百字）的内容可以并进相近的文章，太长的可以拆开。
-- **板块对应目录**：规划 `planning`、竞赛 `competitions`、保研 `baoyan`、考公 `kaogong`、留学 `abroad`、奖学金 `scholarship`、校园信息差 `campus`。
+- **一篇只写一个板块**：拿不准放哪里时，参考下面的目录对照表。
+
+## 板块与目录对照
+
+<div class="label-table">
+
+| 大类 | 板块 | 目录 |
+|---|---|---|
+| 了解学院 | 学院与专业 | `college` |
+| | 导师与科研 | `mentors` |
+| 在校学习与生活 | 大学四年规划 | `planning` |
+| | 课程与学业 | `academics` |
+| | 竞赛 | `competitions` |
+| | 奖学金 | `scholarship` |
+| | 校园生活 | `campus` |
+| 毕业去向 | 保研 | `baoyan` |
+| | 考研 | `kaoyan` |
+| | 就业与实习 | `career` |
+| | 考公·选调 | `kaogong` |
+| | 留学 | `abroad` |
+
+</div>
+
+## 涉及老师的内容
+
+写到具体老师时（尤其是「导师与科研」板块），**只写公开信息**：研究方向、所在实验室、官方主页链接、招收本科生的方式，以及你自己进组、做科研的亲身经历。**不写对老师个人的评分、排名、评价或传闻**，不符合规则的投稿不会被合并。

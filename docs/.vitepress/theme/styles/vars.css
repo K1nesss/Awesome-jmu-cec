@@ -40,6 +40,9 @@ html:root {
   --vp-custom-block-tip-bg: var(--vp-c-bg-alt);
   --vp-custom-block-tip-text: var(--vp-c-text-1);
   --vp-custom-block-info-bg: var(--vp-c-bg-alt);
+  /* 注意块（warning）也不用默认的黄色，改为暖灰底 + 墨色左边框（见 polish.css） */
+  --vp-custom-block-warning-bg: var(--vp-c-bg-alt);
+  --vp-custom-block-warning-text: var(--vp-c-text-1);
 
   /* 顶栏：纯黑（明暗模式统一）。顶栏内部的配色令牌见 polish.css 的 .VPNav 作用域 */
   --vp-nav-bg-color: #1f1e1d;
