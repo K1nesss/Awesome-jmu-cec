@@ -46,13 +46,19 @@
   color-scheme: dark;
 }
 
-/* 默认主题在首页顶部 / 有侧栏时把顶栏设为透明，本站要求任何状态都是实心黑 */
-.VPNav .VPNavBar,
-.VPNav .VPNavBar.home.top {
-  background-color: var(--vp-nav-bg-color);
+/* 默认主题在首页顶部、以及有侧栏的页面（≥960px）把顶栏整体或左侧标题区设为透明，
+   让侧栏颜色透上来——浅色模式下标题会变成米白底上的白字。本站要求任何状态都是实心黑。
+   默认规则带 scoped 属性且层级较深，这里用 !important 统一兜底 */
+.VPNav .VPNavBar {
+  background-color: var(--vp-nav-bg-color) !important;
 }
-.VPNav .VPNavBar .content-body {
-  background-color: transparent;
+.VPNav .VPNavBar .content-body,
+.VPNav .VPNavBar .title {
+  background-color: transparent !important;
+}
+/* 有侧栏时标题区下方的一段分隔线（与整条顶栏下沿重复），去掉 */
+.VPNav .VPNavBarTitle .title {
+  border-bottom-color: transparent !important;
 }
 .VPNav .VPNavBar .divider-line,
 .VPNav .VPNavBar .divider {
@@ -149,6 +155,11 @@
 .VPLocalSearchBox input::-webkit-search-cancel-button {
   -webkit-appearance: none;
   display: none;
+}
+
+/* 「标签 | 说明」类表格：首列是短标签，不换行（否则手机上会被挤成一字一行） */
+.vp-doc .label-table td:first-child {
+  white-space: nowrap;
 }
 
 /* ---------- 无障碍 ---------- */

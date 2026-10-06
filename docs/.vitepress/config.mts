@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
 import { SECTIONS } from './sections'
+import { genSidebar } from '../../scripts/gen-sidebar.mjs'
 
 // 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
@@ -122,6 +123,10 @@ export default defineConfig({
     },
 
     // 默认主题在 zh-Hans 下不会自动翻译这些 UI 文案（PLAN.md §12-2）
+    // 侧栏：按目录自动生成（scripts/gen-sidebar.mjs）；板块还没有文章时不显示侧栏
+    // 新增文章后需重启 npm run dev 才会进侧栏（线上构建不受影响）
+    sidebar: genSidebar(fileURLToPath(new URL('..', import.meta.url)), SECTIONS),
+
     outline: { level: [2, 3], label: '本页目录' },
     docFooter: { prev: '上一篇', next: '下一篇' },
     lastUpdated: {
