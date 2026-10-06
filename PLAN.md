@@ -615,12 +615,13 @@ v1 = 上述全部，**不做**：评论系统、统计埋点（GA 被墙且涉�
 7. **双许可机制**：单个 LICENSE 表达不了「代码 MIT + 文章 CC BY-SA 4.0」——放 `LICENSE`（MIT）+ `LICENSE-CONTENT.md`（CC BY-SA 4.0 摘要），README/页脚注明；CONTRIBUTING 写明「投稿即同意以 CC BY-SA 4.0 发布」；加「撤稿与更正」Issue 模板；页脚/关于页/README 三处写清「非学校官方项目、不代表学校立场」；不使用校徽等商标资产。
 8. **外链腐烂**：VitePress 只校验站内链接。加每月定时 workflow（lychee-action 固定版本）检查外部链接，失效开 Issue 而不是让 PR 变红（外网波动不应阻断贡献）；政策类文章强制 `updated` 年份；年度「内容年检」Issue 模板列出超过 12 个月未更新的文章。
 9. **性能预算**：README 写性能预算表（首页 JS gzip、单页字体字节、搜索索引体积、单图大小），verify-build 输出 dist 指标并断言阈值；M5 用 Lighthouse 移动端限速跑首页 + 一篇长文留档；M1 实测首屏字体下载量（确认 fontsource Inter 与默认主题自带 Inter 是否重复，重复则删）。
-10. **自定义域名切换**：host/base 抽成 config 单一常量（verify-build/sitemap/OG 从 config 读取）；`docs/maintainers/custom-domain.md` 写清 DNS 记录、Enforce HTTPS、CNAME、base 改 `/`、重跑验收清单全流程。
+10. **自定义域名切换**：host/base 抽成 config 单一常量（verify-build/sitemap/OG 从 config 读取）；`docs/maintainers/custom-domain.md` 写清 DNS 记录、Enforce HTTPS、base 改 `/`、重跑验收清单全流程。**Actions 部署方式的关键坑**：Settings 里填的自定义域名不会写进仓库，每次部署会把 GitHub 自动生成的 CNAME 冲掉导致域名失效——必须在 `docs/public/CNAME` 自己放一个内容为域名的文件（推荐子域名 CNAME 指向 `k1nesss.github.io`，比 apex A 记录简单；解析到境外无需 ICP 备案，但建议避开 .cn）。
 11. **RSS/更新订阅**：构建期约 20 行脚本从 frontmatter（title/updated/description）生成 `/feed.xml`（Atom），head 加 alternate link，页脚放订阅入口；顺带做 `/updates` 页按 updated 倒序（给不熟悉 RSS 的用户「最近更新」入口）。
 12. **隐私立场**：文档化「数据源 = GitHub Insights/Traffic（14 天窗口）+ Issue/PR 量」；若需细粒度统计，评估自托管 Umami/Plausible（单独决策，不进 v1）；「无 Cookie、无追踪、零第三方脚本」写成隐私立场与验收项，防止未来有人随手塞回 GA。
 13. **冷启动运营**：M4 定首波作者与截止时间（覆盖 8 个板块）、学院群/新生群/竞赛群征稿、「署名 + 贡献者墙/作者页」做成可见激励、每月发一次选题 Issue（用 campus/index.md 的待认领清单）、关于页公示成为作者/维护者的路径。
 14. **无障碍补全**：`@media (prefers-reduced-motion: reduce)` 关闭位移/缩放动画；卡片、popover、伪搜索条补 `:focus-visible` 轮廓（accent 系且 ≥3:1）；style-guide 规定图片必须有说明性 alt 并给正反例；M5 用 Lighthouse a11y + axe 抽查并留档。
 15. **搜索能力边界**：明示「按汉字匹配，不支持拼音」；首页伪搜索条实现为 `<button aria-label="搜索">`（显示 ⌘K / `/` 快捷键提示，点击派发与内置弹窗相同的快捷键事件），不要做成真 input 造成不可用控件；模板加 keywords 示例字段（二期并入索引时注意函数仍需自包含）。
+16. **工作流 YAML 流式映射内嵌表达式会被拒绝**（M0 实测踩坑）：`concurrency: { group: ${{ github.ref }}, ... }` 这类流式写法中的 `{{ }}` 会触发解析器报错（表现：push 后该 workflow 0s 失败、GitHub 提示 "workflow file issue"，且 Dependabot 的 github-actions 更新会连带失败）。**凡含 `${{ }}` 的值一律用块式写法**；`${{ }}` 出现在块式值中（如 deploy.yml 的 `url: ${{ steps.deployment.outputs.page_url }}`）则没有问题。
 
 ---
 
