@@ -7,6 +7,24 @@
    3. 正文页 / 404 / 无障碍
    ===================================================== */
 
+/* ---------- 0. 页面滚动条 ---------- */
+/* 桌面端始终为滚动条预留位置：长页面（有滚动条）与短页面（无滚动条）之间切换时，
+   视口宽度不变，居中的顶栏菜单与标题、搜索框不再左右跳动。
+   预留出的竖条显示的是 html 背景：用固定背景把它最上面一段（顶栏高度）涂成顶栏黑，
+   其余部分是页面底色，这样短页面右侧不会出现一条与黑顶栏断开的米白竖条。
+   手机浏览器使用悬浮滚动条、不占宽度，无需处理 */
+@media (min-width: 768px) {
+  html {
+    scrollbar-gutter: stable;
+    background: linear-gradient(
+        to bottom,
+        var(--vp-nav-bg-color) var(--vp-nav-height),
+        var(--vp-c-bg) var(--vp-nav-height)
+      )
+      fixed;
+  }
+}
+
 /* ---------- 1. 顶栏 ---------- */
 .VPNav {
   --vp-c-bg: #1f1e1d;
@@ -24,8 +42,6 @@
   --vp-c-default-soft: rgba(250, 249, 245, 0.1);
   --vp-c-default-2: rgba(250, 249, 245, 0.16);
   --vp-input-border-color: rgba(250, 249, 245, 0.3);
-  --vp-input-switch-bg-color: rgba(250, 249, 245, 0.14);
-  --vp-c-neutral-inverse: #45433e; /* 明暗切换圆钮底色 */
   --vp-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
 }
@@ -88,6 +104,14 @@
   .VPNavBarSearch .DocSearch-Button-Keys {
     margin-left: auto;
   }
+}
+
+/* 「板块」下拉菜单：默认主题让菜单右对齐按钮，改为在按钮正下方居中。
+   transform 需要 !important，因为默认主题在展开/收起两种状态下都会改写 transform */
+.VPNavBarMenuGroup .menu {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%) !important;
 }
 
 /* 下拉菜单里的当前板块 */

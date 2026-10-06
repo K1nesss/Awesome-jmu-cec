@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, type DefaultTheme } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
 
@@ -26,6 +27,20 @@ export default defineConfig({
   base: BASE,
   cleanUrls: true,
   lastUpdated: true,
+  // 明暗模式：初始跟随系统（'auto'），用户手动切换后记住选择
+  appearance: true,
+
+  vite: {
+    resolve: {
+      // 用图标按钮替换默认主题的明暗滑块开关（VitePress 官方支持的“覆盖内部组件”方式）
+      alias: [
+        {
+          find: /^.*\/VPSwitchAppearance\.vue$/,
+          replacement: fileURLToPath(new URL('./theme/components/ThemeToggle.vue', import.meta.url)),
+        },
+      ],
+    },
+  },
 
   // head 条目不会自动补 base（PLAN.md §12-1），手动拼接
   head: [
