@@ -1,5 +1,6 @@
 /* ============ 黑顶栏（字面量 + !important，不依赖变量级联） ============ */
 .VPNavBar {
+  position: relative;
   background-color: #1f1e1d !important;
   border-bottom: 1px solid #3a3934;
 }
@@ -13,37 +14,46 @@
 }
 
 /* 菜单文字：默认主题用 --vp-c-text-1（深色），黑底上必须强制浅色 */
-.VPNavBarMenuLink {
-  color: rgba(250, 249, 245, 0.82) !important;
-}
+.VPNavBarMenuLink { color: rgba(250, 249, 245, 0.82) !important; }
 .VPNavBarMenuLink:hover,
 .VPNavBarMenuLink.active { color: #faf9f5 !important; }
 .VPNavBarMenuGroup .button { color: rgba(250, 249, 245, 0.82) !important; }
 .VPNavBarMenuGroup .button:hover { color: #faf9f5 !important; }
 
-/* 布局：左标题 | 中导航（auto margin 居中）| 右搜索框 + 明暗切换 */
-.VPNavBar .content-body {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+/* 布局：左标题 | 中导航（相对顶栏绝对居中）| 右搜索框 + 明暗切换
+   content-body 默认 position:relative 会把绝对定位的参照系拉偏，改回 static */
+.VPNavBar .content-body { position: static; }
+.VPNavBarMenu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
-.VPNavBarMenu { order: 1; margin: 0 auto; }
-.VPNavBarSearch { order: 2; }
-.VPNavBarAppearance { order: 3; }
-.VPNavBarSocialLinks { order: 4; }
 
-/* 顶栏图标（明暗切换/汉堡）配色适配黑底 */
-.VPNavBarAppearance .VPSwitchAppearance,
-.VPNavBarHamburger { color: rgba(250, 249, 245, 0.82); }
-
-/* 搜索按钮做成输入框样式 */
+/* 搜索框：默认 flex-grow:1 会吃掉中间全部空间，改为紧凑固定宽度 */
+.VPNavBarSearch { flex-grow: 0 !important; padding-left: 0; }
 .VPNavBarSearch .DocSearch-Button {
+  width: 200px;
   background: rgba(250, 249, 245, 0.08);
   border: 1px solid rgba(250, 249, 245, 0.22);
   border-radius: 8px;
   color: rgba(250, 249, 245, 0.82);
 }
 .VPNavBarSearch .DocSearch-Button:hover { border-color: #faf9f5; }
+/* 中文占位（M3 全量中文化前的最小处理） */
+.VPNavBarSearch .DocSearch-Button-Placeholder { font-size: 0; }
+.VPNavBarSearch .DocSearch-Button-Placeholder::after { content: '搜索'; font-size: 14px; }
+
+/* 顶栏图标（明暗切换/汉堡）配色适配黑底 */
+.VPNavBarAppearance .VPSwitchAppearance,
+.VPNavBarHamburger { color: rgba(250, 249, 245, 0.82); }
+
+/* 移动端抽屉：黑底 + 浅色条目（默认条目用 --vp-c-text-1，浅色模式下黑底黑字不可见） */
+.VPNavScreenMenuLink { color: rgba(250, 249, 245, 0.82) !important; }
+.VPNavScreenMenuLink:hover,
+.VPNavScreenMenuLink.active { color: #faf9f5 !important; }
+.VPNavScreenMenuGroup .button,
+.VPNavScreenMenuGroup .text { color: rgba(250, 249, 245, 0.82) !important; }
+.VPNavScreenAppearance { color: rgba(250, 249, 245, 0.82); }
 
 /* ============ 首页卡片极简 ============ */
 .VPFeature {
