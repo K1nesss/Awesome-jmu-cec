@@ -12,18 +12,29 @@ export default defineConfig({
   base: BASE,
   cleanUrls: true,
   lastUpdated: true,
+  head: [
+    // 主题色防闪：首屏前恢复 localStorage 中的 accent 选择（PLAN.md §4）
+    ['script', {}, `try{var a=localStorage.getItem('accent');if(a)document.documentElement.dataset.accent=a}catch(e){}`],
+  ],
   themeConfig: {
-    // TODO(M1)：Claude 风格主题系统（vars.css + 5 套主题色 + AccentSwitcher + 字体）
     // TODO(M2)：接入中文分词（miniSearch options.tokenize / searchOptions.tokenize 共用 cjkTokenize）
     search: { provider: 'local', options: { detailedView: true } },
-    // TODO(M3)：自动侧栏（gen-sidebar.mjs）、中文 UI 字符串、404、OG/sitemap
     nav: [
-      { text: '大学四年规划', link: '/planning/' },
-      { text: '竞赛', link: '/competitions/' },
-      { text: '保研', link: '/baoyan/' },
-      { text: '考公', link: '/kaogong/' },
-      { text: '留学', link: '/abroad/' },
-      { text: '奖学金', link: '/scholarship/' },
+      { text: '首页', link: '/' },
+      {
+        text: '板块',
+        items: [
+          { text: '大学四年规划', link: '/planning/' },
+          { text: '竞赛', link: '/competitions/' },
+          { text: '保研', link: '/baoyan/' },
+          { text: '考公·选调', link: '/kaogong/' },
+          { text: '留学', link: '/abroad/' },
+          { text: '奖学金', link: '/scholarship/' },
+          { text: '校园信息差', link: '/campus/' },
+        ],
+      },
+      { text: '投稿', link: '/contribute/' },
+      { text: '关于', link: '/about/' },
     ],
     outline: { level: [2, 3], label: '本页目录' },
   },
