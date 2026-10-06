@@ -221,7 +221,7 @@ html.dark[data-accent='terracotta'] { --accent-ink:#E08A6A; --accent-strong:#D97
 
 - **顶栏**：纯黑 `#1F1E1D`（明暗模式统一）；左 = 项目名；中 = 导航（首页 · 板块▾（7 个板块）· 投稿 · 关于）；右 = 搜索框样式按钮（点击/⌘K 打开内置搜索弹窗）+ 明暗切换。布局用 flex `order` + 菜单 `margin: 0 auto` 居中实现
 - **底色**：米白 `#FAF9F5`；深色 `#262624`
-- **字体**：标题衬线（Fraunces + Noto Serif SC，自托管）；正文系统字体栈（已删除 `@fontsource-variable/inter`，依赖 4 个）
+- **字体**：全站 PingFang SC（mac）+ 微软雅黑（Windows），零字体下载（已删除全部 fontsource 自托管字体，依赖降至 2 个：vitepress + gray-matter）
 - **强调色**：黑白灰无彩色——链接深灰 `#4A4842`、按钮纯黑 `#1F1E1D`（深色模式链接浅灰、按钮反白）
 - **首页**：只留 8 张板块卡片（圆角细边框，hover 边框变黑），无 hero 大标题
 - **无主题色切换**：AccentSwitcher 组件与防闪脚本已删除；主题文件简化为 `theme/index.ts`（直接导出默认主题）+ 3 个 CSS

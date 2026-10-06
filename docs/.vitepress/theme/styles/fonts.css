@@ -1,7 +1,5 @@
-/* 标题衬线：Fraunces（拉丁）+ Noto Serif SC（中文），正文走默认系统字体栈
-   字体由 theme/index.ts 自托管导入（PLAN.md §4.3） */
+/* 全站字体：PingFang SC（macOS/iOS）+ 微软雅黑（Windows），零字体下载（PLAN.md §4.6） */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Fraunces Variable', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', SimSun, Georgia, serif;
   font-weight: 600;
   letter-spacing: 0.01em;
 }

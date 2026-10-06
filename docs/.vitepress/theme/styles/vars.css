@@ -4,6 +4,9 @@
    ===================================================== */
 
 html:root {
+  /* 全站字体：PingFang SC（mac）+ 微软雅黑（Windows） */
+  --vp-font-family-base: 'PingFang SC', 'Microsoft YaHei', 'HarmonyOS Sans SC', 'Source Han Sans SC', sans-serif;
+
   /* 页面底色（米白）与文字 */
   --vp-c-bg: #faf9f5;
   --vp-c-bg-alt: #f0eee6;
