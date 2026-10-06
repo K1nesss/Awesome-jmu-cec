@@ -4,7 +4,8 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
-const BASE = '/Awesome-jmu-cec/' // 与 docs/.vitepress/config.mts 的 BASE 保持一致
+const BASE = '/' // 与 docs/.vitepress/config.mts 的 BASE 保持一致（Cloudflare Pages 根路径）
+const STALE_BASE = '/Awesome-jmu-cec/' // 回退 GitHub Pages 托管时需与 config.mts 同步修改
 const DIST = join(import.meta.dirname, '..', 'docs', '.vitepress', 'dist')
 // TODO(M4)：种子内容上线后填入，例如 ['保研', '推免', '夏令营', '选调', '蓝桥杯', '转专业', '绩点']
 const KEYWORDS = []
@@ -25,14 +26,20 @@ function walk(dir, out = []) {
 
 if (!existsSync(join(DIST, 'index.html'))) fail('dist/index.html 不存在（构建未产出）')
 
+// 资源引用检查放在 HTML 上：base 为 '/' 时 HTML 用绝对路径 /assets/，JS chunk 之间是相对引用
+let assetRefs = 0
+for (const f of walk(DIST).filter((f) => f.endsWith('.html'))) {
+  const text = readFileSync(f, 'utf8')
+  if (text.includes(STALE_BASE)) fail(`产物中残留旧 base 前缀：${f}`)
+  assetRefs += text.split('/assets/').length - 1
+}
+if (assetRefs === 0) fail('产物 HTML 中没有任何 /assets/ 资源引用（构建异常）')
+
 const jsFiles = walk(join(DIST, 'assets')).filter((f) => f.endsWith('.js'))
 let searchIndex = null
 for (const f of jsFiles) {
   const text = readFileSync(f, 'utf8')
-  // 资源路径引用检查：任何 /assets/ 引用都必须带 base 前缀（项目页部署在子路径下）
-  const bare = text.split('/assets/').length - 1
-  const prefixed = text.split(`${BASE}assets/`).length - 1
-  if (prefixed !== bare) fail(`资源路径缺少 base 前缀：${f}`)
+  if (text.includes(STALE_BASE)) fail(`产物中残留旧 base 前缀：${f}`)
   if (f.split(/[\\/]/).pop().startsWith('@localSearchIndex')) searchIndex = text
 }
 if (!searchIndex) fail('未找到本地搜索索引块（@localSearchIndex*.js）')
@@ -44,4 +51,4 @@ for (const kw of KEYWORDS) {
   }
 }
 const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项全部命中` : ''
-console.log(`✅ verify-build：dist 存在、base 前缀正确、搜索索引存在${extra}`)
+console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在${extra}`)

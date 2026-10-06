@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress'
 
-// 站点部署基路径：GitHub 项目页固定为 /<repo>/；绑定自定义域名时改为 '/'
-// （M3 起 sitemap/OG/verify-build 均从本常量读取，见 PLAN.md §12-10）
-export const BASE = '/Awesome-jmu-cec/'
+// 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
+// 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
+// （M3 起 sitemap/OG 均从本常量读取，见 PLAN.md §12-10）
+export const BASE = '/'
 
 export default defineConfig({
   title: 'Awesome JMU CEC',
