@@ -1,9 +1,36 @@
-/* ============ 黑顶栏细节 ============ */
-.VPNavBar { border-bottom: 1px solid #3a3934; }
+/* ============ 黑顶栏（字面量 + !important，不依赖变量级联） ============ */
+.VPNavBar {
+  background-color: #1f1e1d !important;
+  border-bottom: 1px solid #3a3934;
+}
 .VPNavBar .divider,
 .VPNavBar .divider-line { background-color: #3a3934; }
+
 .VPNavBarTitle .title,
-.VPNavBarTitle .title:hover { color: #faf9f5; font-weight: 600; }
+.VPNavBarTitle .title:hover {
+  color: #faf9f5;
+  font-weight: 600;
+}
+
+/* 菜单文字：默认主题用 --vp-c-text-1（深色），黑底上必须强制浅色 */
+.VPNavBarMenuLink {
+  color: rgba(250, 249, 245, 0.82) !important;
+}
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuLink.active { color: #faf9f5 !important; }
+.VPNavBarMenuGroup .button { color: rgba(250, 249, 245, 0.82) !important; }
+.VPNavBarMenuGroup .button:hover { color: #faf9f5 !important; }
+
+/* 布局：左标题 | 中导航（auto margin 居中）| 右搜索框 + 明暗切换 */
+.VPNavBar .content-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.VPNavBarMenu { order: 1; margin: 0 auto; }
+.VPNavBarSearch { order: 2; }
+.VPNavBarAppearance { order: 3; }
+.VPNavBarSocialLinks { order: 4; }
 
 /* 顶栏图标（明暗切换/汉堡）配色适配黑底 */
 .VPNavBarAppearance .VPSwitchAppearance,
@@ -16,27 +43,13 @@
   border-radius: 8px;
   color: rgba(250, 249, 245, 0.82);
 }
-.VPNavBarSearch .DocSearch-Button:hover { border-color: var(--accent); }
+.VPNavBarSearch .DocSearch-Button:hover { border-color: #faf9f5; }
 
-/* ============ 首页极简 ============ */
-.VPHero .name {
-  font-size: 40px;
-  color: var(--vp-c-text-1);
-  background: none;
-  -webkit-background-clip: initial;
-  -webkit-text-fill-color: var(--vp-c-text-1);
-  font-weight: 600;
-}
-.VPHero .text {
-  color: var(--accent-ink);
-  font-weight: 600;
-}
-.VPHero .actions .VPButton { border-radius: 8px; }
-
-/* ============ 板块卡片极简 ============ */
+/* ============ 首页卡片极简 ============ */
 .VPFeature {
   border: 1px solid var(--vp-c-border);
   border-radius: 12px;
   background: var(--vp-c-bg);
 }
-.VPFeature:hover { border-color: var(--accent); }
+.VPFeature:hover { border-color: #1f1e1d; }
+.dark .VPFeature:hover { border-color: #f0eee6; }

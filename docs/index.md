@@ -1,17 +1,6 @@
 ---
 layout: home
 title: Awesome JMU CEC
-hero:
-  name: Awesome JMU CEC
-  text: 打破信息差
-  tagline: 面向集美大学计算机工程学院本科生：大学四年规划、竞赛、保研、考公、留学、奖学金的真实经验。
-  actions:
-    - theme: brand
-      text: 开始阅读
-      link: /planning/
-    - theme: alt
-      text: 如何投稿
-      link: /contribute/
 features:
   - title: 📅 大学四年规划
     details: 大一到大四每个阶段该做什么、什么时间点干什么。

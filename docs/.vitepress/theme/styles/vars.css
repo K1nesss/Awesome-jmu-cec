@@ -1,10 +1,9 @@
 /* =====================================================
-   极简主题令牌：黑顶栏 + 米白底 + 5 套主题色（PLAN.md §4.6）
-   四角色模型：--accent-ink 链接文字（≥4.5:1）/ --accent-strong 按钮底（白字 ≥4.5:1，已实测校准）
-   / --accent 装饰 / --accent-soft 浅底高亮
+   极简主题令牌：黑顶栏 + 米白底 + 黑白灰强调（PLAN.md §4.6）
+   全站无彩色：链接深灰、按钮纯黑；深色模式链接浅灰、按钮反白
    ===================================================== */
 
-:root {
+html:root {
   /* 页面底色（米白）与文字 */
   --vp-c-bg: #faf9f5;
   --vp-c-bg-alt: #f0eee6;
@@ -25,20 +24,19 @@
   --vp-nav-screen-bg-color: #1f1e1d;
   --vp-nav-screen-text-color: rgba(250, 249, 245, 0.82);
 
-  /* 默认主题色：陶土 */
-  --accent-ink: #b4552f;
-  --accent-strong: #b06046;
-  --accent: #d97757;
-  --accent-soft: rgba(217, 119, 87, 0.12);
+  /* 黑白灰强调：链接深灰、按钮纯黑 */
+  --vp-c-brand-1: #4a4842;
+  --vp-c-brand-2: #1f1e1d;
+  --vp-c-brand-3: #1f1e1d;
+  --vp-c-brand-soft: rgba(31, 30, 29, 0.06);
+  --vp-button-brand-bg: #1f1e1d;
+  --vp-button-brand-hover-bg: #000000;
+  --vp-button-brand-active-bg: #000000;
+  --vp-button-brand-text: #faf9f5;
+  --vp-local-search-highlight-bg: rgba(31, 30, 29, 0.08);
 }
 
-/* 主题色切换（AccentSwitcher 写 data-accent，head 内联脚本防闪） */
-html[data-accent='sage'] { --accent-ink: #4f6b44; --accent-strong: #637d58; --accent: #7c9c6e; --accent-soft: rgba(124, 156, 110, 0.13); }
-html[data-accent='teal'] { --accent-ink: #34717e; --accent-strong: #497e89; --accent: #5fa3b2; --accent-soft: rgba(95, 163, 178, 0.13); }
-html[data-accent='plum'] { --accent-ink: #8c5c79; --accent-strong: #956986; --accent: #b47fa1; --accent-soft: rgba(180, 127, 161, 0.13); }
-html[data-accent='amber'] { --accent-ink: #8f6a1e; --accent-strong: #8f7034; --accent: #d3a54c; --accent-soft: rgba(211, 165, 76, 0.15); }
-
-.dark {
+html.dark {
   --vp-c-bg: #262624;
   --vp-c-bg-alt: #1f1e1d;
   --vp-c-bg-soft: #30302e;
@@ -50,24 +48,15 @@ html[data-accent='amber'] { --accent-ink: #8f6a1e; --accent-strong: #8f7034; --a
   --vp-c-border: #3e3d38;
   --vp-c-gutter: #2e2d2a;
   --vp-sidebar-bg-color: var(--vp-c-bg-alt);
-}
 
-/* 深色模式：ink 提亮，strong 沿用校准值（白字对比度已达标） */
-.dark { --accent-ink: #e08a6a; --accent-strong: #b06046; --accent: #e08a6a; --accent-soft: rgba(224, 138, 106, 0.16); }
-.dark[data-accent='sage'] { --accent-ink: #a3b894; --accent-strong: #637d58; --accent: #8fae81; --accent-soft: rgba(143, 174, 129, 0.16); }
-.dark[data-accent='teal'] { --accent-ink: #8fc3ce; --accent-strong: #497e89; --accent: #6fb5c2; --accent-soft: rgba(111, 181, 194, 0.16); }
-.dark[data-accent='plum'] { --accent-ink: #d0aac3; --accent-strong: #956986; --accent: #b98ba8; --accent-soft: rgba(185, 139, 168, 0.16); }
-.dark[data-accent='amber'] { --accent-ink: #e0bc72; --accent-strong: #8f7034; --accent: #d3a54c; --accent-soft: rgba(211, 165, 76, 0.16); }
-
-/* 映射到 VitePress brand 变量 */
-:root {
-  --vp-c-brand-1: var(--accent-ink);
-  --vp-c-brand-2: var(--accent-strong);
-  --vp-c-brand-3: var(--accent-strong);
-  --vp-c-brand-soft: var(--accent-soft);
-  --vp-button-brand-bg: var(--accent-strong);
-  --vp-button-brand-hover-bg: color-mix(in oklab, var(--accent-strong) 86%, black);
-  --vp-button-brand-active-bg: color-mix(in oklab, var(--accent-strong) 80%, black);
-  --vp-button-brand-text: #ffffff;
-  --vp-local-search-highlight-bg: var(--accent-soft);
+  /* 深色：链接浅灰、按钮反白 */
+  --vp-c-brand-1: #b8b4a8;
+  --vp-c-brand-2: #f0eee6;
+  --vp-c-brand-3: #f0eee6;
+  --vp-c-brand-soft: rgba(240, 238, 230, 0.1);
+  --vp-button-brand-bg: #f0eee6;
+  --vp-button-brand-hover-bg: #ffffff;
+  --vp-button-brand-active-bg: #ffffff;
+  --vp-button-brand-text: #1f1e1d;
+  --vp-local-search-highlight-bg: rgba(240, 238, 230, 0.12);
 }

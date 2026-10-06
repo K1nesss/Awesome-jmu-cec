@@ -12,10 +12,6 @@ export default defineConfig({
   base: BASE,
   cleanUrls: true,
   lastUpdated: true,
-  head: [
-    // 主题色防闪：首屏前恢复 localStorage 中的 accent 选择（PLAN.md §4）
-    ['script', {}, `try{var a=localStorage.getItem('accent');if(a)document.documentElement.dataset.accent=a}catch(e){}`],
-  ],
   themeConfig: {
     // TODO(M2)：接入中文分词（miniSearch options.tokenize / searchOptions.tokenize 共用 cjkTokenize）
     search: { provider: 'local', options: { detailedView: true } },
