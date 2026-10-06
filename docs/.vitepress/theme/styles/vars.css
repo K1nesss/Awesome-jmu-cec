@@ -1,11 +1,13 @@
 /* =====================================================
    极简主题令牌：黑顶栏 + 米白底 + 黑白灰强调（PLAN.md §4.6）
    全站无彩色：链接深灰、按钮纯黑；深色模式链接浅灰、按钮反白
+   用 html:root / html.dark 提高优先级，压过默认主题的 :root / .dark
    ===================================================== */
 
 html:root {
-  /* 全站字体：PingFang SC（mac）+ 微软雅黑（Windows） */
-  --vp-font-family-base: 'PingFang SC', 'Microsoft YaHei', 'HarmonyOS Sans SC', 'Source Han Sans SC', sans-serif;
+  /* 全站字体：PingFang SC（mac）+ 微软雅黑（Windows），零字体下载 */
+  --vp-font-family-base: 'PingFang SC', 'Microsoft YaHei', 'HarmonyOS Sans SC',
+    'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif;
 
   /* 页面底色（米白）与文字 */
   --vp-c-bg: #faf9f5;
@@ -14,18 +16,11 @@ html:root {
   --vp-c-bg-elv: #ffffff;
   --vp-c-text-1: #1f1e1d;
   --vp-c-text-2: #5c594f;
-  --vp-c-text-3: #8a8678;
+  --vp-c-text-3: #767264; /* 原 #8a8678 在米白底上对比度 3.4:1，提到 ≥4.5:1 */
   --vp-c-divider: #e6e2d6;
   --vp-c-border: #e0dcce;
   --vp-c-gutter: #ebe8dd;
   --vp-sidebar-bg-color: var(--vp-c-bg);
-
-  /* 顶栏：纯黑（明暗模式统一） */
-  --vp-nav-bg-color: #1f1e1d;
-  --vp-nav-text-color: rgba(250, 249, 245, 0.82);
-  --vp-nav-hover-text-color: #faf9f5;
-  --vp-nav-screen-bg-color: #1f1e1d;
-  --vp-nav-screen-text-color: rgba(250, 249, 245, 0.82);
 
   /* 黑白灰强调：链接深灰、按钮纯黑 */
   --vp-c-brand-1: #4a4842;
@@ -36,7 +31,25 @@ html:root {
   --vp-button-brand-hover-bg: #000000;
   --vp-button-brand-active-bg: #000000;
   --vp-button-brand-text: #faf9f5;
+  --vp-button-brand-hover-text: #faf9f5;
+  --vp-button-brand-active-text: #faf9f5;
   --vp-local-search-highlight-bg: rgba(31, 30, 29, 0.08);
+  --vp-local-search-highlight-text: var(--vp-c-text-1);
+
+  /* 提示块（tip/info）去掉默认蓝/紫，统一为暖灰 */
+  --vp-custom-block-tip-bg: var(--vp-c-bg-alt);
+  --vp-custom-block-tip-text: var(--vp-c-text-1);
+  --vp-custom-block-info-bg: var(--vp-c-bg-alt);
+
+  /* 顶栏：纯黑（明暗模式统一）。顶栏内部的配色令牌见 polish.css 的 .VPNav 作用域 */
+  --vp-nav-bg-color: #1f1e1d;
+  --vp-nav-screen-bg-color: #1f1e1d;
+
+  /* 本站自定义令牌 */
+  --jc-radius: 12px;
+  --jc-card-bg: var(--vp-c-bg-elv);
+  --jc-card-hover-border: #1f1e1d;
+  --jc-focus-ring: #1f1e1d;
 }
 
 html.dark {
@@ -46,14 +59,14 @@ html.dark {
   --vp-c-bg-elv: #30302e;
   --vp-c-text-1: #f0eee6;
   --vp-c-text-2: #b8b4a8;
-  --vp-c-text-3: #8b8779;
+  --vp-c-text-3: #9a9688;
   --vp-c-divider: #3e3d38;
   --vp-c-border: #3e3d38;
   --vp-c-gutter: #2e2d2a;
   --vp-sidebar-bg-color: var(--vp-c-bg-alt);
 
   /* 深色：链接浅灰、按钮反白 */
-  --vp-c-brand-1: #b8b4a8;
+  --vp-c-brand-1: #d6d2c6;
   --vp-c-brand-2: #f0eee6;
   --vp-c-brand-3: #f0eee6;
   --vp-c-brand-soft: rgba(240, 238, 230, 0.1);
@@ -61,5 +74,11 @@ html.dark {
   --vp-button-brand-hover-bg: #ffffff;
   --vp-button-brand-active-bg: #ffffff;
   --vp-button-brand-text: #1f1e1d;
+  --vp-button-brand-hover-text: #1f1e1d;
+  --vp-button-brand-active-text: #1f1e1d;
   --vp-local-search-highlight-bg: rgba(240, 238, 230, 0.12);
+
+  --jc-card-bg: #2c2c2a;
+  --jc-card-hover-border: #f0eee6;
+  --jc-focus-ring: #f0eee6;
 }

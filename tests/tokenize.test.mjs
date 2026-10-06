@@ -34,3 +34,12 @@ test('混排：CJK 与拉丁各按规则处理', () => {
 test('空输入返回空数组', () => {
   assert.deepEqual(cjkTokenize(''), [])
 })
+
+test('函数自包含：toString() 后经 new Function 还原，结果与原函数一致（模拟 VitePress 下发到浏览器）', () => {
+  // VitePress 把 themeConfig 里的函数 toString() 序列化，浏览器端 new Function 还原；
+  // 若函数引用了外部变量，这里会抛 ReferenceError
+  const revived = new Function(`return (${cjkTokenize.toString()})`)()
+  for (const sample of ['优秀大学生夏令营', 'CET-6 备考', 'ICPC 组队', '']) {
+    assert.deepEqual(revived(sample), cjkTokenize(sample))
+  }
+})

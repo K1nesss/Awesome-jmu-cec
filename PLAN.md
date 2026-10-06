@@ -225,7 +225,7 @@ html.dark[data-accent='terracotta'] { --accent-ink:#E08A6A; --accent-strong:#D97
 - **强调色**：黑白灰无彩色——链接深灰 `#4A4842`、按钮纯黑 `#1F1E1D`（深色模式链接浅灰、按钮反白）
 - **首页**：只留 8 张板块卡片（圆角细边框，hover 边框变黑），无 hero 大标题
 - **无主题色切换**：AccentSwitcher 组件与防闪脚本已删除；主题文件简化为 `theme/index.ts`（直接导出默认主题）+ 3 个 CSS
-- **实现陷阱（已实测修复）**：默认主题菜单文字用 `--vp-c-text-1`（黑底上不可见），且组件规则带 scoped 属性——顶栏颜色/文字/布局全部用**字面量 + `!important`** 断言，变量覆盖统一用 `html:root` / `html.dark` 提高优先级
+- **实现方式（2026-10 重构）**：顶栏不再逐组件写字面量 + `!important`（旧写法漏掉了「板块」下拉按钮文字、「…」更多菜单与移动端抽屉开关，且搜索框固定 200px 在手机上撑出横向滚动）。改为在 `.VPNav` 上整体重定义一套“黑底浅字”配色令牌，顶栏内所有子组件自动跟随；菜单居中仅在 ≥1024px 生效，搜索框紧凑宽度仅在 ≥768px 生效。页面级变量覆盖仍用 `html:root` / `html.dark`；首页卡片规则需加一层 `.VPFeatures` 才能压过默认主题的 scoped 样式
 
 ---
 
@@ -263,7 +263,7 @@ export function cjkTokenize(text) {
 
 ### 5.2 配置（config.mts 的 themeConfig.search）
 
-> ⚠️ **M0 实测修正**：`provider: 'local'` **必须显式设置**——1.6.4 没有默认值，不设置则本地搜索插件直接短路，不生成 `@localSearchIndex` 索引块、也没有搜索 UI（已读包源码确认：`provider !== "local"` 时插件提前返回）。M0 已显式开启 `search: { provider: 'local', options: { detailedView: true } }`，M2 再接入分词器。
+> ⚠️ **M0 实测修正**：`provider: 'local'` **必须显式设置**——1.6.4 没有默认值，不设置则本地搜索插件直接短路，不生成 `@localSearchIndex` 索引块、也没有搜索 UI（已读包源码确认：`provider !== "local"` 时插件提前返回）。M0 已显式开启 `search: { provider: 'local', options: { detailedView: true } }`；2026-10 已接入分词器（索引端与查询端同函数），并补充 `tests/` 中的 toString → new Function 往返测试与 verify-build 关键词冒烟。
 
 ```ts
 import { cjkTokenize } from './search/cjkTokenize.mjs'

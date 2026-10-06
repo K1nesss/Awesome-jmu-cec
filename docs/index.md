@@ -1,6 +1,7 @@
 ---
 layout: home
 title: Awesome JMU CEC
+titleTemplate: false # 首页不再拼接「| 站点名」，避免标题重复
 features:
   - title: 📅 大学四年规划
     details: 大一到大四每个阶段该做什么、什么时间点干什么。
@@ -18,7 +19,7 @@ features:
     details: 地区选择、语言备考、申请材料与费用奖学金。
     link: /abroad/
   - title: 💰 奖学金
-    details: 国奖国励、校级奖学金与综测规则、申请技巧。
+    details: 国家奖学金、励志奖学金、校级奖学金与综测规则、申请技巧。
     link: /scholarship/
   - title: 💡 校园信息差
     details: 选课、转专业、实习、工具与生活经验。

@@ -1,5 +1,15 @@
-/* 全站字体：PingFang SC（macOS/iOS）+ 微软雅黑（Windows），零字体下载（PLAN.md §4.6） */
+/* 中文排版（PLAN.md §4.4 / §4.6）：字体栈见 vars.css 的 --vp-font-family-base，零字体下载 */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   letter-spacing: 0.01em;
+}
+
+/* 正文：中文需要比默认主题更宽松的行距 */
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.8;
+}
+
+.vp-doc h1 {
+  letter-spacing: 0.02em;
 }
