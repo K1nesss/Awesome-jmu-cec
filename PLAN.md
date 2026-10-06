@@ -621,6 +621,7 @@ v1 = 上述全部，**不做**：评论系统、统计埋点（GA 被墙且涉�
 13. **冷启动运营**：M4 定首波作者与截止时间（覆盖 8 个板块）、学院群/新生群/竞赛群征稿、「署名 + 贡献者墙/作者页」做成可见激励、每月发一次选题 Issue（用 campus/index.md 的待认领清单）、关于页公示成为作者/维护者的路径。
 14. **无障碍补全**：`@media (prefers-reduced-motion: reduce)` 关闭位移/缩放动画；卡片、popover、伪搜索条补 `:focus-visible` 轮廓（accent 系且 ≥3:1）；style-guide 规定图片必须有说明性 alt 并给正反例；M5 用 Lighthouse a11y + axe 抽查并留档。
 15. **搜索能力边界**：明示「按汉字匹配，不支持拼音」；首页伪搜索条实现为 `<button aria-label="搜索">`（显示 ⌘K / `/` 快捷键提示，点击派发与内置弹窗相同的快捷键事件），不要做成真 input 造成不可用控件；模板加 keywords 示例字段（二期并入索引时注意函数仍需自包含）。
+16. **工作流 YAML 流式映射内嵌表达式会被拒绝**（M0 实测踩坑）：`concurrency: { group: ${{ github.ref }}, ... }` 这类流式写法中的 `{{ }}` 会触发解析器报错（表现：push 后该 workflow 0s 失败、GitHub 提示 "workflow file issue"，且 Dependabot 的 github-actions 更新会连带失败）。**凡含 `${{ }}` 的值一律用块式写法**；`${{ }}` 出现在块式值中（如 deploy.yml 的 `url: ${{ steps.deployment.outputs.page_url }}`）则没有问题。
 
 ---
 
