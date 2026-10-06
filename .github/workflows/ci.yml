@@ -4,7 +4,10 @@ name: CI
 on:
   pull_request:
 permissions: { contents: read }
-concurrency: { group: ${{ github.ref }}, cancel-in-progress: true }
+# 注意：concurrency 用块式写法——流式映射 `{ group: ${{ ... }} }` 内含 `{{ }}` 会被工作流解析器拒绝（M0 实测踩坑）
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
