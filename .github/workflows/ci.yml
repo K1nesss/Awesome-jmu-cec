@@ -1,7 +1,9 @@
-# PR 门禁：校验 + 构建（不部署），红色即拦截合并（PLAN.md §8.3）
-# 死链、Markdown/Vue 语法错、构建失败会给出文件 + 行号，坏改动永远到不了 main
+# 校验 + 构建（不部署）（PLAN.md §8.3）
+# - pull_request：红色即拦截合并（死链、Markdown/Vue 语法错、构建失败给出文件 + 行号）
+# - push main：维护者直推后的自检（不拦截；CF 构建失败不部署，线上保留上一版）
 name: CI
 on:
+  push: { branches: [main] }
   pull_request:
 permissions: { contents: read }
 # 注意：concurrency 用块式写法——流式映射 `{ group: ${{ ... }} }` 内含 `{{ }}` 会被工作流解析器拒绝（M0 实测踩坑）

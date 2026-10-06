@@ -500,6 +500,13 @@ jobs:
 6. 搜索索引与字体均从本站域（含 base 前缀）加载成功；
 7. 全站无英文 UI 残留（含 title/aria 属性）。
 
+### 8.7 托管切换：Cloudflare Pages（2026-10 起主托管）
+
+- **主托管**：Cloudflare Pages（https://awesome-jmu-cec.pages.dev/），GitHub 仍是代码与审核中枢。CF Pages 直连 GitHub（Workers & Pages → Pages → Git integration）：Build command `npm ci && npm run build`、Output `docs/.vitepress/dist`、生产分支 main；push main 自动构建，免费附带 **PR 预览部署**与**一键瞬时回滚**。
+- **base 已改 `'/'`**（config.mts 的 BASE）；verify-build 断言「无残留旧 base + HTML 含 /assets/ 引用」；deploy.yml 已删除，GitHub Pages 旧地址冻结在最后构建。
+- **回退方案**：恢复 deploy.yml + BASE 改回 '/Awesome-jmu-cec/' + 重启 GitHub Pages。
+- **注意**：Cloudflare 的统一 GitHub App（`cloudflare-workers-and-pages`）为每个连接的项目发检查；删除 CF 侧项目后旧检查记录会残留（无法删除、不阻塞合并），新提交不再产生。Pages 预览检查保留（PR 预览）。
+
 ---
 
 ## 9. 贡献者工作流与审核机制
@@ -529,14 +536,16 @@ jobs:
 
 **防线 1：合并前人工审核（天生的）**——除维护者外任何人都不能直接改 main，所有改动必须 PR → 维护者 Review（看每一处 diff）→ 合并。没有任何路径可以绕过审核改线上内容。
 
-**防线 2：分支保护规则**（M0 一次性配置）：
+**防线 2：分支保护规则**（2026-10 起按「管理员直推 + 贡献者 PR」模型配置）：
 
 | 规则 | 作用 |
 |---|---|
-| Require a pull request before merging + 1 approval | 维护者自己也不能直推 main，全部走 PR + 至少一人批准 |
-| Require status checks to pass（勾选 `ci`） | CI 红了（死链、语法错）物理上点不了合并按钮 |
+| Require a pull request before merging + 1 approval | **贡献者**（无写权限）必须 fork + PR + 至少 1 名维护者批准才能合并 |
+| Require status checks to pass（context = `build`） | PR 的 CI 红了（死链、语法错）点不了合并按钮 |
+| `enforce_admins: false`（允许管理员绕过） | **维护者本人可直推 main 开发**，不受 PR/审核约束；2026-10 开发期工作流：本地合并分支 → 直推 main |
 | 禁止 force push / 禁止删除分支 | 防覆盖历史、防毁仓库 |
-| CODEOWNERS 指定 `docs/**` 与 `.vitepress/**` | 明确内容与配置的审核归属 |
+
+> 若未来要恢复「连维护者也必须走 PR」：把 enforce_admins 改回 true 即可（一行 API 调用）。
 
 **防线 3：内容风险面天然很小**——知识文章站不是代码执行环境，markdown 里塞 `<script>` 不会执行；恶意改动的最坏后果是「发布了一篇坏内容」，不会破坏站点本身。
 
