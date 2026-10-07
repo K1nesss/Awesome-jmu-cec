@@ -16,7 +16,7 @@
   "devDependencies": {
     "@vueuse/core": "^12.8.2",
     "gray-matter": "^4.0.3",
-    "maplibre-gl": "^5.24.0",
+    "maplibre-gl": "^6.12.0",
     "medium-zoom": "^1.1.0",
     "vitepress": "1.6.4"
   }
