@@ -356,6 +356,7 @@ Plan A 本方案；Plan B 升级破坏内置搜索时自维护官方搜索组件
 - **纠错与补充（2026-10）**：文章页正文末尾（`doc-footer-before` 插槽，`ArticleFeedback.vue`）有「报告错误」「补充内容」两个按钮，跳到 `.github/ISSUE_TEMPLATE/correction.yml` / `addition.yml` 表单，通过 URL 参数预填标题、页面地址（`page`）和源文件路径（`file`）；表单字段 id 与参数名必须一致。
 - **搜索同义词（2026-10）**：`docs/.vitepress/search/synonyms.mjs` 维护同义词组（保研/推免、国奖/国家奖学金……）；`search.options._render` 建索引时把文中出现词的同组其他词、以及 frontmatter `keywords` 写进标题所在段（只进索引、不改页面）。verify-build 检查只靠同义词进索引的词（国奖、GPA）确实可搜到。
 - **小改进（2026-10）**：首页「四年路线」在 < 640px 时改为横向滑动（吸附滚动 + 上方「大一…大四」标签）；页脚更新时间改为「更新于 3 天前」（`LastUpdated.vue` 经 alias 覆盖默认组件，悬停看完整日期）；苹果设备搜索快捷键显示 ⌘ K（首屏脚本给 `<html>` 加 `mac` 类）；搜索弹窗未输入时显示推荐搜索词（`SearchHints.vue`，Teleport 进弹窗）；404 页（`NotFound.vue`）提供搜索、按地址猜板块、常看板块和失效链接报告。
+- **文章图片（2026-10）**：图片放在文章旁的 `images/` 里相对引用；`![说明](./images/a.png "图注")` 单独成段时渲染为带图注的 `<figure>`（`docs/.vitepress/markdown/figure.mjs`）；文章图片统一居中、圆角、细边框（polish.css）。点击放大（`ImageZoom.vue`）：宽屏用 medium-zoom，< 768px 用全屏查看器（双击放大到约 3 倍、拖动查看）；`{.no-zoom}` 或链接里的图片不放大。`scripts/check-images.mjs`（并入 `npm run check`，只提示不阻断）：超过 500 KB、文件名带空格、防盗链图床外链、缺少说明文字。
 - `cleanUrls: true`。已知 dev 细节：新增文件要重启 `npm run dev` 才进侧栏（对贡献者无影响，写入维护者文档）。
 
 ---

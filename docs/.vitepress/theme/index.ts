@@ -10,6 +10,7 @@ import ReadingAids from './components/ReadingAids.vue'
 import ArticleFeedback from './components/ArticleFeedback.vue'
 import SearchHints from './components/SearchHints.vue'
 import NotFound from './components/NotFound.vue'
+import ImageZoom from './components/ImageZoom.vue'
 import './styles/vars.css'
 import './styles/fonts.css'
 import './styles/polish.css'
@@ -26,8 +27,8 @@ export default {
       'doc-footer-before': () => h(ArticleFeedback),
       // 手机菜单（☰）顶部：本板块文章列表
       'nav-screen-content-before': () => h(SectionNav),
-      // 全站：回到顶部（带阅读进度环）、锚点跳转高亮；搜索弹窗还没输入时的推荐搜索词
-      'layout-bottom': () => [h(ReadingAids), h(SearchHints)],
+      // 全站：回到顶部（带阅读进度环）、锚点跳转高亮；搜索弹窗还没输入时的推荐搜索词；文章图片点击放大
+      'layout-bottom': () => [h(ReadingAids), h(SearchHints), h(ImageZoom)],
       // 404：搜索、按地址猜板块、常看的板块
       'not-found': () => h(NotFound),
     }),

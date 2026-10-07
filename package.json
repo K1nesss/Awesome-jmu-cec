@@ -8,13 +8,14 @@
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "npm run check && vitepress build docs",
-    "check": "node scripts/check-frontmatter.mjs",
+    "check": "node scripts/check-frontmatter.mjs && node scripts/check-images.mjs",
     "test": "node --test",
     "preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@vueuse/core": "^12.8.2",
     "gray-matter": "^4.0.3",
+    "medium-zoom": "^1.1.0",
     "vitepress": "1.6.4"
   }
 }

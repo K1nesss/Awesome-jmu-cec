@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
+import { figurePlugin } from './markdown/figure.mjs'
 import { expandSynonyms, injectSearchTerms, normalizeKeywords } from './search/synonyms.mjs'
 import { GROUPS, REPO, SECTIONS } from './sections'
 import { writeFileSync } from 'node:fs'
@@ -77,6 +78,10 @@ export default defineConfig({
 
   markdown: {
     image: { lazyLoading: true },
+    // ![说明](./images/a.png "图注")：单独成段且写了标题的图片显示为带图注的 figure
+    config: (md) => {
+      md.use(figurePlugin)
+    },
     // 自定义容器默认是英文标题（TIP/WARNING…），统一中文
     container: {
       tipLabel: '提示',

@@ -355,3 +355,47 @@
 .VPLocalSearchBox .search-keyboard-shortcuts {
   order: 2;
 }
+
+/* ---------- 文章图片 ----------
+   居中、圆角、细边框（截图多为白底，不加边框会和米色背景糊在一起）；
+   单独成段且写了标题的图片带图注（docs/.vitepress/markdown/figure.mjs） */
+.vp-doc img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+}
+
+.vp-doc figure {
+  margin: 24px 0;
+}
+
+.vp-doc figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--vp-c-text-3);
+}
+
+/* 点击放大（ImageZoom.vue）：层级高于顶栏和侧栏 */
+.medium-zoom-overlay {
+  z-index: 200;
+}
+
+.medium-zoom-image--opened {
+  z-index: 201;
+  border-color: transparent !important;
+}
+
+.vp-doc img.medium-zoom-image,
+.vp-doc img.jc-zoomable {
+  cursor: zoom-in;
+}
+
+/* 手机全屏看图时锁住页面滚动 */
+html.jc-viewer-open {
+  overflow: hidden;
+}
