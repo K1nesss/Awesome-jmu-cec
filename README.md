@@ -12,6 +12,8 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/K1nesss/Awesome-jmu-cec/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/K1nesss/Awesome-jmu-cec/actions/workflows/ci.yml)
 [![欢迎投稿](https://img.shields.io/badge/欢迎投稿-PRs_welcome-1f1e1d?style=flat-square)](https://awesome-jmu-cec.pages.dev/contribute/)
 [![VitePress](https://img.shields.io/badge/built_with-VitePress-1f1e1d?style=flat-square)](https://vitepress.dev/)
+[![内容许可](https://img.shields.io/badge/内容-CC_BY--SA_4.0-1f1e1d?style=flat-square)](LICENSE-CONTENT.md)
+[![代码许可](https://img.shields.io/badge/代码-MIT-1f1e1d?style=flat-square)](LICENSE)
 
 [**打开网站**](https://awesome-jmu-cec.pages.dev/) ·
 [投稿指南](https://awesome-jmu-cec.pages.dev/contribute/) ·
@@ -33,6 +35,7 @@
 - [本地运行](#本地运行)
 - [部署](#部署)
 - [致谢](#致谢)
+- [许可](#许可)
 
 ## 这是什么
 
@@ -100,6 +103,7 @@
 - **只写自己确认过的信息**，政策类内容注明年份、尽量附官方链接。
 - **保护隐私**：不出现他人的姓名、学号、联系方式或聊天截图。
 - **涉及老师只写公开信息**（研究方向、实验室、官方主页、进组经历），不写评分、评价或传闻。
+- **投稿即同意**以 [CC BY-SA 4.0](LICENSE-CONTENT.md) 许可发布，并确认内容和图片是你自己的或已获授权。
 
 ## 本地运行
 
@@ -159,6 +163,12 @@ Web Analytics 在 Cloudflare 后台开启，不使用 Cookie。
 - 地图数据 © [OpenStreetMap](https://www.openstreetmap.org/copyright) 贡献者，按 ODbL 许可使用
 - 网站图标中的「J」取自 [JetBrains Mono](https://www.jetbrains.com/lp/mono/)（SIL Open Font License）
 - 灵感来自 GitHub 上的各类 [Awesome](https://github.com/sindresorhus/awesome) 列表和各高校的学生互助手册
+
+## 许可
+
+- **文章内容**：[CC BY-SA 4.0](LICENSE-CONTENT.md)——可以自由转载和修改，需要署名并以相同许可共享。
+- **代码**：[MIT](LICENSE)。
+- 校园地图数据来自 OpenStreetMap，按 ODbL 许可；图标字形来自 JetBrains Mono，按 SIL OFL 许可。详见 [LICENSE-CONTENT.md](LICENSE-CONTENT.md)。
 
 <div align="center">
 <sub>觉得有用？给仓库点个 ⭐，或者把网站分享给下一届。</sub>

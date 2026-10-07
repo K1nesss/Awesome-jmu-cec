@@ -98,6 +98,10 @@ docs/baoyan/
 
 提交后，自动检查会提示过大的图片、外链图片和缺少说明的图片（只提示，不影响发布）。
 
+## 许可
+
+本站文章采用 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hans) 许可：任何人都可以转载和修改，只要署名并以相同许可共享。**投稿即表示你同意以这个许可发布**，并确认文章是你自己写的、图片是你自己拍的或已获授权。署名以文章开头的 `author` 为准。详见仓库里的 [LICENSE-CONTENT.md](https://github.com/K1nesss/Awesome-jmu-cec/blob/main/LICENSE-CONTENT.md)。
+
 ## 写作建议
 
 - **写清时间**：政策、名额、时间线每年都会变，请注明是哪一年的情况。

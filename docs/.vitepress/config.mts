@@ -230,6 +230,7 @@ export default defineConfig({
 
     footer: {
       message: '非集美大学官方项目，内容来自同学投稿，仅供参考，请以学校与学院最新通知为准。',
+      copyright: `文章采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hans" target="_blank" rel="noopener">CC BY-SA 4.0</a> 许可，代码采用 <a href="${REPO}/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> 许可`,
     },
 
     // 默认主题在 zh-Hans 下不会自动翻译这些 UI 文案
