@@ -79,6 +79,9 @@ if (/<loc>[^<]*404/.test(sitemap)) fail('404 页不应出现在 sitemap.xml 里'
 const robots = existsSync(join(DIST, 'robots.txt')) ? readFileSync(join(DIST, 'robots.txt'), 'utf8') : ''
 if (!robots.includes(`Sitemap: ${SITE_URL}${BASE}sitemap.xml`)) fail('robots.txt 缺失或没有指向 sitemap.xml')
 if (!existsSync(join(DIST, 'og.png'))) fail('缺少分享配图 og.png')
+for (const f of ['favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'icon-512.png', 'site.webmanifest']) {
+  if (!existsSync(join(DIST, f))) fail(`缺少网站图标文件 ${f}`)
+}
 const articleHtml = readFileSync(join(DIST, 'baoyan', 'timeline.html'), 'utf8')
 for (const needle of [
   `<meta property="og:url" content="${SITE_URL}${BASE}baoyan/timeline">`,

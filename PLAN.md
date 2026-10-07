@@ -361,6 +361,7 @@ Plan A 本方案；Plan B 升级破坏内置搜索时自维护官方搜索组件
 - **收录与分享（2026-10）**：`SITE_URL`（config.mts，换域名只改这里和 verify-build.mjs 的同名常量）→ `sitemap.xml`（排除 404）、buildEnd 生成 `robots.txt`；`transformHead` 按页输出 canonical、Open Graph、Twitter Card，配图统一 `public/og.png`（1200×630）；只写 summary 的文章用 summary 作页面描述。verify-build 断言以上产物。
 - **访问统计（2026-10）**：Cloudflare Web Analytics，在 Cloudflare 后台 Pages 项目 → Metrics → Web Analytics 开启，部署时自动注入，无需改代码；不使用 Cookie。关于页「隐私」一节有说明。这是全站唯一的第三方请求（static.cloudflareinsights.com）。
 - **校园地图（2026-10）**：`/map/`（`CampusMap.vue`，异步组件，MapLibre GL 单独成块只在本页加载）。数据：`data/osm/jmu-campus.osm`（OpenStreetMap 导出，ODbL）→ `npm run map:build`（`scripts/build-campus-map.mjs`）→ `docs/public/map/campus.geojson`（只含集美大学各校区内的建筑/水面/运动场/道路，不含行政界线和校外建筑）+ `docs/map/places.generated.json`；人工修正在 `docs/map/places.yaml`（`theme/map.data.ts` 合并）。无瓦片、无第三方地图服务；定位用浏览器 Geolocation（WGS-84 与 OSM 一致，无需纠偏），只在浏览器内使用。入口：顶栏地图图标（`NavMapLink.vue`，nav-bar-content-after 插槽）、首页卡片（`mapPreview.data.ts` 生成平面预览）。测试检查提交的数据与 .osm 同步；verify-build 检查数据与人工修正生效。
+- **网站图标（2026-10）**：「J_」终端光标风格——JetBrains Mono Bold（OFL）的 J 字形转成路径，加一条与 J 笔画同粗的光标条，底边与 J 对齐；整体左右、上下留白各自相等。文件：`public/favicon.svg`、`favicon-32.png`、`apple-touch-icon.png`（180，方形满版，系统自行裁圆角）、`icon-512.png`、`site.webmanifest`；分享图 `og.png` 顶栏用反色版标志。
 - `cleanUrls: true`。已知 dev 细节：新增文件要重启 `npm run dev` 才进侧栏（对贡献者无影响，写入维护者文档）。
 
 ---

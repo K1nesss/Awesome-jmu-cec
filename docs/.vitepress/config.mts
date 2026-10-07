@@ -128,7 +128,12 @@ export default defineConfig({
 
   // head 条目不会自动补 base（PLAN.md §12-1），手动拼接
   head: [
+    // 网站图标「J_」：终端光标风格（JetBrains Mono Bold 的 J + 与笔画同粗的光标条，四边对称留白）
+    // SVG 给现代浏览器；32px PNG 给不支持 SVG 图标的浏览器；180px 给苹果设备「添加到主屏幕」；manifest 给安卓
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: `${BASE}favicon-32.png` }],
+    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: `${BASE}apple-touch-icon.png` }],
+    ['link', { rel: 'manifest', href: `${BASE}site.webmanifest` }],
     ['meta', { name: 'theme-color', content: '#1f1e1d' }],
     // 首屏渲染前：
     //   1. 写入当前主题模式（auto/light/dark），主题按钮据此显示对应图标，避免闪烁（见 ThemeToggle.vue）

@@ -1,0 +1,13 @@
+{
+  "name": "Awesome JMU CEC",
+  "short_name": "JMU CEC",
+  "description": "面向集美大学计算机工程学院本科生的信息差百科",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#faf9f5",
+  "theme_color": "#1f1e1d",
+  "icons": [
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
