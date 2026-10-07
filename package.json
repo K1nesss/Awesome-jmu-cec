@@ -14,7 +14,7 @@
     "map:build": "node scripts/build-campus-map.mjs"
   },
   "devDependencies": {
-    "@vueuse/core": "^12.8.2",
+    "@vueuse/core": "^15.0.0",
     "gray-matter": "^4.0.3",
     "maplibre-gl": "^5.24.0",
     "medium-zoom": "^1.1.0",
