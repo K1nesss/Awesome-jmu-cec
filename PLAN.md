@@ -358,6 +358,8 @@ Plan A 本方案；Plan B 升级破坏内置搜索时自维护官方搜索组件
 - **小改进（2026-10）**：首页「四年路线」在 < 640px 时改为横向滑动（吸附滚动 + 上方「大一…大四」标签）；页脚更新时间改为「更新于 3 天前」（`LastUpdated.vue` 经 alias 覆盖默认组件，悬停看完整日期）；苹果设备搜索快捷键显示 ⌘ K（首屏脚本给 `<html>` 加 `mac` 类）；搜索弹窗未输入时显示推荐搜索词（`SearchHints.vue`，Teleport 进弹窗）；404 页（`NotFound.vue`）提供搜索、按地址猜板块、常看板块和失效链接报告。
 - **文章图片（2026-10）**：图片放在文章旁的 `images/` 里相对引用；`![说明](./images/a.png "图注")` 单独成段时渲染为带图注的 `<figure>`（`docs/.vitepress/markdown/figure.mjs`）；文章图片统一居中、圆角、细边框（polish.css）。点击放大（`ImageZoom.vue`）：宽屏用 medium-zoom，< 768px 用全屏查看器（双击放大到约 3 倍、拖动查看）；`{.no-zoom}` 或链接里的图片不放大。`scripts/check-images.mjs`（并入 `npm run check`，只提示不阻断）：超过 500 KB、文件名带空格、防盗链图床外链、缺少说明文字。
 - **问答与贡献者（2026-10）**：构建时读取 GitHub（`scripts/github.mjs` → `theme/github.data.ts`），读者浏览器不访问 GitHub。问答：带「提问」标签的 open issue（表单 `.github/ISSUE_TEMPLATE/question.yml`，按「板块」字段归类）显示在 `/questions/` 与各板块首页末尾，只显示标题和纯文本摘要；关闭或去掉标签即消失。`.github/workflows/rebuild-on-issues.yml` 在提问相关事件后调用 `CLOUDFLARE_DEPLOY_HOOK` 重新构建。贡献者：仓库 contributors（去掉机器人与 `docs/about/contributors.yaml` 的 exclude 名单）+ 文章 frontmatter 作者，头像构建时下载到缓存、buildEnd 发布到 `/avatars/`，失败退回 GitHub 地址。令牌：Cloudflare 环境变量 `GITHUB_READ_TOKEN`（失效时自动退回未登录读取）；`JC_OFFLINE=1` 跳过网络，`JC_QUESTIONS_FIXTURE` 用假数据预览。任何读取失败都不让构建失败。
+- **收录与分享（2026-10）**：`SITE_URL`（config.mts，换域名只改这里和 verify-build.mjs 的同名常量）→ `sitemap.xml`（排除 404）、buildEnd 生成 `robots.txt`；`transformHead` 按页输出 canonical、Open Graph、Twitter Card，配图统一 `public/og.png`（1200×630）；只写 summary 的文章用 summary 作页面描述。verify-build 断言以上产物。
+- **访问统计（2026-10）**：Cloudflare Web Analytics，在 Cloudflare 后台 Pages 项目 → Metrics → Web Analytics 开启，部署时自动注入，无需改代码；不使用 Cookie。关于页「隐私」一节有说明。这是全站唯一的第三方请求（static.cloudflareinsights.com）。
 - `cleanUrls: true`。已知 dev 细节：新增文件要重启 `npm run dev` 才进侧栏（对贡献者无影响，写入维护者文档）。
 
 ---

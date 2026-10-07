@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
 import { figurePlugin } from './markdown/figure.mjs'
 import { expandSynonyms, injectSearchTerms, normalizeKeywords } from './search/synonyms.mjs'
-import { GROUPS, REPO, SECTIONS } from './sections'
+import { GROUPS, REPO, SECTIONS, isArticlePath } from './sections'
 import { cpSync, existsSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { countArticles, genSidebar } from '../../scripts/gen-sidebar.mjs'
@@ -14,6 +14,10 @@ import { readCachedData } from '../../scripts/github.mjs'
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
 // （M3 起 sitemap/OG 均从本常量读取，见 PLAN.md §12-10）
 export const BASE = '/'
+
+// 站点正式地址（不带结尾斜杠）：sitemap、分享卡片的绝对链接都从这里拼。换自定义域名时只改这一处
+export const SITE_URL = 'https://awesome-jmu-cec.pages.dev'
+const SITE_DESC = '面向集美大学计算机工程学院本科生的信息差百科：学院与导师、四年规划、竞赛、保研、考研、就业、考公、留学。'
 
 
 const DOCS_DIR = fileURLToPath(new URL('..', import.meta.url))
@@ -26,10 +30,53 @@ const navLabel = (text: string, key: string) =>
 
 export default defineConfig({
   title: 'Awesome JMU CEC',
-  description: '面向集美大学计算机工程学院本科生的信息差百科：学院与导师、四年规划、竞赛、保研、考研、就业、考公、留学。',
+  description: SITE_DESC,
   lang: 'zh-Hans',
   base: BASE,
   cleanUrls: true,
+
+  // 站点地图：/sitemap.xml，供百度、必应、谷歌收录（robots.txt 里指向它）
+  sitemap: {
+    hostname: SITE_URL + BASE,
+    // 404 页不进站点地图
+    transformItems: (items) => items.filter((it) => !/(^|\/)404(\.html)?$/.test(it.url)),
+  },
+
+  // 文章只写了 summary 没写 description 时，用 summary 作为页面描述（搜索引擎摘要、分享卡片都用它）
+  transformPageData(pageData) {
+    const fm = pageData.frontmatter
+    if (!fm.description && fm.summary) pageData.description = String(fm.summary)
+  },
+
+  // 分享卡片（Open Graph / Twitter Card）与规范链接：链接发到 QQ、Telegram、微博等时显示标题、简介和配图。
+  // 每页一份；配图统一用 public/og.png（1200×630）
+  transformHead({ pageData, siteData }) {
+    if (pageData.isNotFound || pageData.relativePath === '404.md') return []
+    const path = BASE + pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '')
+    const url = SITE_URL + encodeURI(path)
+    const isHome = pageData.relativePath === 'index.md'
+    const title = isHome ? siteData.title : `${pageData.title} | ${siteData.title}`
+    const desc = pageData.description || siteData.description
+    const image = `${SITE_URL}${BASE}og.png`
+    const isArticle = isArticlePath(pageData.relativePath)
+    return [
+      ['link', { rel: 'canonical', href: url }],
+      ['meta', { property: 'og:type', content: isArticle ? 'article' : 'website' }],
+      ['meta', { property: 'og:site_name', content: siteData.title }],
+      ['meta', { property: 'og:locale', content: 'zh_CN' }],
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: desc }],
+      ['meta', { property: 'og:url', content: url }],
+      ['meta', { property: 'og:image', content: image }],
+      ['meta', { property: 'og:image:width', content: '1200' }],
+      ['meta', { property: 'og:image:height', content: '630' }],
+      ['meta', { property: 'og:image:alt', content: 'Awesome JMU CEC：大学四年，少走一点弯路。' }],
+      ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+      ['meta', { name: 'twitter:title', content: title }],
+      ['meta', { name: 'twitter:description', content: desc }],
+      ['meta', { name: 'twitter:image', content: image }],
+    ]
+  },
   lastUpdated: true,
   // 明暗模式：初始跟随系统（'auto'），用户手动切换后记住选择
   appearance: true,
@@ -61,6 +108,9 @@ export default defineConfig({
     const { events, warnings } = loadEvents(join(DOCS_DIR, 'calendar', 'events.yaml'))
     for (const w of warnings) console.warn(`⚠️ 重要日期：${w}`)
     writeFileSync(join(siteConfig.outDir, 'calendar.ics'), toICS(events))
+
+    // robots.txt：允许收录，并指向站点地图（地址从 SITE_URL 生成，换域名时自动跟着变）
+    writeFileSync(join(siteConfig.outDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}${BASE}sitemap.xml\n`)
 
     // 贡献者头像：构建时下载到缓存目录（theme/github.data.ts），这里随站点一起发布到 /avatars/
     const ghCache = join(DOCS_DIR, '.vitepress', 'cache', 'github')

@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { cjkTokenize } from '../docs/.vitepress/search/cjkTokenize.mjs'
 
 const BASE = '/' // 与 docs/.vitepress/config.mts 的 BASE 保持一致（Cloudflare Pages 根路径）
+const SITE_URL = 'https://awesome-jmu-cec.pages.dev' // 与 config.mts 的 SITE_URL 保持一致
 const STALE_BASE = '/Awesome-jmu-cec/' // 回退 GitHub Pages 托管时需与 config.mts 同步修改
 const DIST = join(import.meta.dirname, '..', 'docs', '.vitepress', 'dist')
 // 搜索索引冒烟：这些词必须出现在索引里（M4 种子文章上线后可追加 '蓝桥杯' 等）
@@ -71,5 +72,21 @@ if (existsSync(ghCache)) {
     if (c.local && !existsSync(join(DIST, c.local))) fail(`贡献者 ${c.login} 的头像 ${c.local} 没有发布到构建产物里`)
   }
 }
+// 站点地图、robots.txt 与分享卡片
+const sitemap = existsSync(join(DIST, 'sitemap.xml')) ? readFileSync(join(DIST, 'sitemap.xml'), 'utf8') : ''
+if (!sitemap.includes(`<loc>${SITE_URL}${BASE}baoyan/</loc>`)) fail('sitemap.xml 缺失，或其中的地址没有使用 SITE_URL + BASE')
+if (/<loc>[^<]*404/.test(sitemap)) fail('404 页不应出现在 sitemap.xml 里')
+const robots = existsSync(join(DIST, 'robots.txt')) ? readFileSync(join(DIST, 'robots.txt'), 'utf8') : ''
+if (!robots.includes(`Sitemap: ${SITE_URL}${BASE}sitemap.xml`)) fail('robots.txt 缺失或没有指向 sitemap.xml')
+if (!existsSync(join(DIST, 'og.png'))) fail('缺少分享配图 og.png')
+const articleHtml = readFileSync(join(DIST, 'baoyan', 'timeline.html'), 'utf8')
+for (const needle of [
+  `<meta property="og:url" content="${SITE_URL}${BASE}baoyan/timeline">`,
+  `<meta property="og:image" content="${SITE_URL}${BASE}og.png">`,
+  `<link rel="canonical" href="${SITE_URL}${BASE}baoyan/timeline">`,
+  '<meta property="og:type" content="article">',
+]) {
+  if (!articleHtml.includes(needle)) fail(`文章页缺少分享卡片标签：${needle}`)
+}
 const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项、同义词 ${SYNONYM_ONLY.length} 项全部命中` : ''
-console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常${extra}`)
+console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常、站点地图与分享卡片正常${extra}`)
