@@ -73,6 +73,35 @@ const STAGES: Stage[] = [
   },
 ]
 
+// ---------- 四年路线：手机上左右滑动 ----------
+// < 640px 时四张卡片横向排列、按卡片吸附滚动，上方「大一…大四」标签显示当前位置，点标签直接跳到对应卡片。
+// 宽屏仍是网格，标签隐藏，这里的逻辑不起作用
+const stagesEl = ref<HTMLOListElement>()
+const activeStage = ref(0)
+
+function onStagesScroll() {
+  const el = stagesEl.value
+  if (!el) return
+  const cards = [...el.children] as HTMLElement[]
+  // 滚到底时最后一张可能无法吸附到最左边，直接算作最后一张
+  if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 2) return (activeStage.value = cards.length - 1)
+  const base = cards[0].offsetLeft
+  let best = 0
+  cards.forEach((c, i) => {
+    if (Math.abs(c.offsetLeft - base - el.scrollLeft) < Math.abs(cards[best].offsetLeft - base - el.scrollLeft)) best = i
+  })
+  activeStage.value = best
+}
+
+function goStage(i: number) {
+  const el = stagesEl.value
+  if (!el) return
+  const cards = el.children as HTMLCollectionOf<HTMLElement>
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollTo({ left: cards[i].offsetLeft - cards[0].offsetLeft, behavior: smooth ? 'smooth' : 'auto' })
+  activeStage.value = i
+}
+
 // 打开站内搜索：直接点击顶栏的搜索按钮，与 Ctrl/⌘ + K 打开的是同一个弹窗
 function openSearch() {
   document.querySelector<HTMLButtonElement>('#local-search .DocSearch-Button')?.click()
@@ -95,7 +124,8 @@ function openSearch() {
               <path d="m20 20-3.5-3.5" />
             </svg>
             <span class="search-text">搜索保研、竞赛、转专业……</span>
-            <kbd class="search-key">Ctrl K</kbd>
+            <!-- 苹果设备显示 ⌘ K（<html> 上的 mac 类由 config.mts 的首屏脚本加上） -->
+            <kbd class="search-key"><span class="key-ctrl">Ctrl</span><span class="key-cmd">⌘</span> K</kbd>
           </button>
           <a v-if="nextEvent" class="next" :class="{ urgent: nextEvent.urgent }" :href="withBase('/calendar/')">
             <span class="next-label">下一个节点</span>
@@ -127,7 +157,20 @@ function openSearch() {
     <section class="route" aria-labelledby="route-title">
       <div class="wrap">
         <h2 id="route-title" class="section-title">四年里，每个阶段该关心什么</h2>
-        <ol class="stages">
+        <!-- 手机端：当前位置 + 点按跳转（宽屏隐藏） -->
+        <div class="stage-tabs" aria-hidden="true">
+          <button
+            v-for="(s, i) in STAGES"
+            :key="s.year"
+            type="button"
+            tabindex="-1"
+            :class="{ active: activeStage === i }"
+            @click="goStage(i)"
+          >
+            {{ s.year }}
+          </button>
+        </div>
+        <ol ref="stagesEl" class="stages" @scroll.passive="onStagesScroll">
           <li v-for="s in STAGES" :key="s.year" class="stage">
             <p class="year">{{ s.year }}</p>
             <h3 class="stage-theme">{{ s.theme }}</h3>
@@ -295,6 +338,16 @@ function openSearch() {
   .search-key { display: none; }
 }
 
+/* 注意：不能用 :global(.mac) 写法——Vue 会把它后面的选择器整段吞掉，变成给 .mac（即 <html>）设样式 */
+.key-cmd,
+:root.mac .key-ctrl {
+  display: none;
+}
+
+:root.mac .key-cmd {
+  display: inline;
+}
+
 /* 下一个节点：搜索框下方一行，链接到重要日期页 */
 .next {
   display: flex;
@@ -439,6 +492,58 @@ function openSearch() {
   .stages { grid-template-columns: repeat(4, 1fr); gap: 32px; }
 }
 
+/* ---------- 手机：横向滑动 ---------- */
+.stage-tabs {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .stage-tabs {
+    display: flex;
+    gap: 6px;
+    margin: -16px 0 20px;
+  }
+
+  .stage-tabs button {
+    flex: 1;
+    min-height: 40px;
+    border: 1px solid var(--home-rule);
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--home-muted);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .stage-tabs button.active {
+    border-color: var(--home-ink);
+    background: var(--home-ink);
+    color: var(--vp-c-bg);
+    font-weight: 600;
+  }
+
+  /* 卡片宽 84%，露出下一张的边缘，暗示可以滑动；左右延伸到屏幕边缘 */
+  .stages {
+    display: flex;
+    gap: 16px;
+    margin: 0 -24px;
+    padding: 0 24px 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 24px;
+    scrollbar-width: none;
+  }
+
+  .stages::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stage {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
+  }
+}
+
 /* 每个阶段顶部一条粗墨线；年级用超大字号作为本页的视觉重心 */
 .stage {
   padding-top: 16px;
@@ -501,7 +606,10 @@ function openSearch() {
 }
 
 .stage-links a {
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
   border: 1px solid var(--home-rule);
   border-radius: 999px;
   font-size: 13px;
@@ -670,6 +778,10 @@ function openSearch() {
 }
 
 .btn-plain {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
   font-size: 15px;
   color: rgba(250, 249, 245, 0.82);
   text-decoration: underline;
@@ -689,6 +801,7 @@ function openSearch() {
 @media (prefers-reduced-motion: reduce) {
   .search,
   .stage-links a,
+  .stage-tabs button,
   .dir-name,
   .recent-name,
   .btn-primary {

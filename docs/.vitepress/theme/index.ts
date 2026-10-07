@@ -8,11 +8,14 @@ import ArticleMeta from './components/ArticleMeta.vue'
 import SectionNav from './components/SectionNav.vue'
 import ReadingAids from './components/ReadingAids.vue'
 import ArticleFeedback from './components/ArticleFeedback.vue'
+import SearchHints from './components/SearchHints.vue'
+import NotFound from './components/NotFound.vue'
 import './styles/vars.css'
 import './styles/fonts.css'
 import './styles/polish.css'
 
-// 顶栏下拉（NavFlyout.vue）与主题切换（ThemeToggle.vue）通过 config.mts 的 vite alias 覆盖默认组件，无需在此注册
+// 顶栏下拉（NavFlyout.vue）、主题切换（ThemeToggle.vue）与页脚更新时间（LastUpdated.vue）
+// 通过 config.mts 的 vite alias 覆盖默认组件，无需在此注册
 export default {
   extends: DefaultTheme,
   Layout: () =>
@@ -23,8 +26,10 @@ export default {
       'doc-footer-before': () => h(ArticleFeedback),
       // 手机菜单（☰）顶部：本板块文章列表
       'nav-screen-content-before': () => h(SectionNav),
-      // 全站：回到顶部（带阅读进度环）、锚点跳转高亮
-      'layout-bottom': () => h(ReadingAids),
+      // 全站：回到顶部（带阅读进度环）、锚点跳转高亮；搜索弹窗还没输入时的推荐搜索词
+      'layout-bottom': () => [h(ReadingAids), h(SearchHints)],
+      // 404：搜索、按地址猜板块、常看的板块
+      'not-found': () => h(NotFound),
     }),
   enhanceApp({ app }) {
     app.component('HomePage', HomePage) // 首页

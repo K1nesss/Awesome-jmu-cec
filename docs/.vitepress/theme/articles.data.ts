@@ -20,7 +20,7 @@ export interface Article {
   updated: number // 最后更新时间（毫秒），用于首页「最近更新」
 }
 
-// 最后更新时间：优先取 git 最后一次提交时间（与页面底部「最后更新于」同源），
+// 最后更新时间：优先取 git 最后一次提交时间（与页面底部「更新于」同源），
 // 拿不到（新文件尚未提交、构建环境没有 git 历史）时退回文件修改时间
 function lastUpdated(file: string): number {
   try {

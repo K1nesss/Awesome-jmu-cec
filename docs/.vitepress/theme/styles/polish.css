@@ -350,3 +350,8 @@
   .VPDocFooter .pager-link .desc::before,
   .VPDocFooter .pager-link .desc::after { transition: none; }
 }
+
+/* 搜索弹窗：推荐搜索词（SearchHints.vue，order: 1）排在结果列表之后、快捷键提示之前 */
+.VPLocalSearchBox .search-keyboard-shortcuts {
+  order: 2;
+}

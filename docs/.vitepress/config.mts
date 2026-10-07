@@ -43,6 +43,10 @@ export default defineConfig({
           replacement: fileURLToPath(new URL('./theme/components/ThemeToggle.vue', import.meta.url)),
         },
         {
+          find: /^.*\/VPDocFooterLastUpdated\.vue$/,
+          replacement: fileURLToPath(new URL('./theme/components/LastUpdated.vue', import.meta.url)),
+        },
+        {
           find: /^.*\/VPFlyout\.vue$/,
           replacement: fileURLToPath(new URL('./theme/components/NavFlyout.vue', import.meta.url)),
         },
@@ -61,11 +65,13 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }],
     ['meta', { name: 'theme-color', content: '#1f1e1d' }],
-    // 首屏渲染前写入当前主题模式（auto/light/dark），主题按钮据此显示对应图标，避免闪烁（见 ThemeToggle.vue）
+    // 首屏渲染前：
+    //   1. 写入当前主题模式（auto/light/dark），主题按钮据此显示对应图标，避免闪烁（见 ThemeToggle.vue）
+    //   2. 苹果设备给 <html> 加 mac 类：搜索快捷键提示显示 ⌘ K 而不是 Ctrl K（默认主题只写了样式，没有加这个类）
     [
       'script',
       {},
-      `(()=>{let m='auto';try{m=localStorage.getItem('vitepress-theme-appearance')||'auto'}catch(e){}document.documentElement.dataset.themeMode=m})()`,
+      `(()=>{const d=document.documentElement;let m='auto';try{m=localStorage.getItem('vitepress-theme-appearance')||'auto'}catch(e){}d.dataset.themeMode=m;if(/Mac|iPhone|iPad|iPod/.test(navigator.platform||navigator.userAgent))d.classList.add('mac')})()`,
     ],
   ],
 
@@ -159,10 +165,8 @@ export default defineConfig({
 
     outline: { level: [2, 3], label: '本页目录' },
     docFooter: { prev: '上一篇', next: '下一篇' },
-    lastUpdated: {
-      text: '最后更新于',
-      formatOptions: { dateStyle: 'medium', timeStyle: 'short', forceLocale: true },
-    },
+    // 页脚更新时间由 LastUpdated.vue 显示为「更新于 3 天前」，这里的文案不再使用
+    lastUpdated: { text: '更新于' },
     returnToTopLabel: '回到顶部',
     sidebarMenuLabel: '菜单',
     darkModeSwitchLabel: '主题',
@@ -170,11 +174,5 @@ export default defineConfig({
     darkModeSwitchTitle: '切换到深色模式',
     skipToContentLabel: '跳到正文',
     externalLinkIcon: true,
-    notFound: {
-      title: '页面不存在',
-      quote: '这篇文章可能已被移动、改名或还没写出来。试试顶栏的搜索，或者从首页重新出发。',
-      linkLabel: '返回首页',
-      linkText: '返回首页',
-    },
   },
 })
