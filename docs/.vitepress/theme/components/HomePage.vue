@@ -154,21 +154,20 @@ function openSearch() {
       </div>
     </section>
 
-    <!-- 校园地图入口：右侧是主校区的建筑平面（构建时由 OpenStreetMap 数据生成，随明暗模式变色） -->
+    <!-- 校园地图入口：只有「打开地图」按钮可以点；右侧是主校区的建筑平面（构建时由 OpenStreetMap 数据生成，随明暗模式变色） -->
     <section class="campus-map" aria-labelledby="map-title">
-      <a class="wrap map-card" :href="withBase('/map/')">
+      <div class="wrap map-card">
         <div class="map-text">
           <h2 id="map-title" class="section-title map-title">校园地图</h2>
           <p class="map-desc">3D 建筑、搜索教学楼和食堂，手机上能显示你在哪里。新生找教室、找宿舍都用得上。</p>
-          <span class="map-go">打开地图 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></span>
+          <a class="map-go" :href="withBase('/map/')">打开地图 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></a>
         </div>
         <svg class="map-preview" :viewBox="`0 0 ${mapPreview.w} ${mapPreview.h}`" role="img" aria-label="主校区建筑平面示意">
           <path class="mp-campus" :d="mapPreview.campus" />
           <path class="mp-water" :d="mapPreview.water" />
           <path class="mp-bld" :d="mapPreview.buildings" />
-          <path class="mp-hi" :d="mapPreview.highlight" />
         </svg>
-      </a>
+      </div>
     </section>
 
     <!-- 四年路线 -->
@@ -492,7 +491,6 @@ function openSearch() {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  color: inherit;
 }
 
 @media (min-width: 640px) {
@@ -545,7 +543,7 @@ function openSearch() {
   stroke-linejoin: round;
 }
 
-.map-card:hover .map-go {
+.map-go:hover {
   background: var(--home-ink);
   color: var(--vp-c-bg);
 }
@@ -577,11 +575,7 @@ function openSearch() {
 
 .mp-bld {
   fill: var(--home-muted);
-  opacity: 0.55;
-}
-
-.mp-hi {
-  fill: var(--home-ink);
+  opacity: 0.6;
 }
 
 /* ---------- 四年路线 ---------- */

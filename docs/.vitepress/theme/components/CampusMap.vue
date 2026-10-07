@@ -22,6 +22,49 @@ const selectedId = ref<string | null>(null)
 const selected = computed(() => places.find((p) => p.id === selectedId.value) || null)
 const sheetOpen = ref(false) // 手机：底部面板是否展开
 
+// ---------- 手机底部面板：拖动顶部的横条上拉展开、下拉收起 ----------
+// 拖动时面板高度跟手；松手后按速度或位置吸附到「收起 / 展开」。轻点横条也能切换
+const panelEl = ref<HTMLElement>()
+const dragH = ref<number | null>(null)
+const SHEET_COLLAPSED = 168 // 与样式里的收起高度一致
+const sheetExpanded = () => Math.round((panelEl.value?.parentElement?.clientHeight || window.innerHeight) * 0.62)
+let drag: { startY: number; startH: number; lastY: number; lastT: number; v: number; moved: boolean } | null = null
+let suppressClick = false
+
+function onGrabDown(e: PointerEvent) {
+  if (!isNarrow() || !panelEl.value) return
+  drag = { startY: e.clientY, startH: panelEl.value.getBoundingClientRect().height, lastY: e.clientY, lastT: e.timeStamp, v: 0, moved: false }
+  ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+}
+function onGrabMove(e: PointerEvent) {
+  if (!drag) return
+  const dy = e.clientY - drag.startY
+  if (Math.abs(dy) > 4) drag.moved = true
+  if (!drag.moved) return
+  dragH.value = Math.min(sheetExpanded() + 24, Math.max(SHEET_COLLAPSED - 40, drag.startH - dy))
+  const dt = e.timeStamp - drag.lastT
+  if (dt > 0) drag.v = (e.clientY - drag.lastY) / dt // 像素/毫秒，正数表示向下
+  drag.lastY = e.clientY
+  drag.lastT = e.timeStamp
+}
+function onGrabUp() {
+  if (!drag) return
+  if (drag.moved) {
+    const mid = (SHEET_COLLAPSED + sheetExpanded()) / 2
+    sheetOpen.value = drag.v < -0.35 ? true : drag.v > 0.35 ? false : (dragH.value ?? 0) > mid
+    suppressClick = true
+  }
+  dragH.value = null
+  drag = null
+}
+function onGrabClick() {
+  if (suppressClick) {
+    suppressClick = false
+    return
+  }
+  sheetOpen.value = !sheetOpen.value
+}
+
 const me = ref<{ lon: number; lat: number; acc: number } | null>(null)
 
 function distance(a: { lon: number; lat: number }, b: { lon: number; lat: number }) {
@@ -213,6 +256,8 @@ function hasWebGL() {
 }
 
 onMounted(async () => {
+  // 地图页不需要整页滚动：锁住页面，避免在手机上拖面板或地图时整页跟着上下滑
+  document.documentElement.classList.add('jc-map-page')
   if (!hasWebGL()) {
     noWebGL.value = true
     return
@@ -267,6 +312,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  document.documentElement.classList.remove('jc-map-page')
   stopLocate()
   map.value?.remove()
 })
@@ -436,8 +482,20 @@ const levelText = (p: Place) => (p.levels ? `${p.levels} 层` : '')
     </p>
 
     <!-- 地点面板：桌面在左侧，手机是底部可展开的面板 -->
-    <section class="panel" aria-label="地点">
-      <button type="button" class="grab" :aria-expanded="sheetOpen" aria-label="展开或收起地点列表" @click="sheetOpen = !sheetOpen"><span /></button>
+    <section ref="panelEl" class="panel" :class="{ dragging: dragH != null }" :style="dragH != null ? { maxHeight: `${dragH}px` } : undefined" aria-label="地点">
+      <button
+        type="button"
+        class="grab"
+        :aria-expanded="sheetOpen"
+        :aria-label="sheetOpen ? '收起地点面板' : '展开地点面板'"
+        @pointerdown="onGrabDown"
+        @pointermove="onGrabMove"
+        @pointerup="onGrabUp"
+        @pointercancel="onGrabUp"
+        @click="onGrabClick"
+      >
+        <span />
+      </button>
 
       <template v-if="selected">
         <div class="detail">
@@ -574,8 +632,9 @@ const levelText = (p: Place) => (p.levels ? `${p.levels} 层` : '')
   .sheet-open .panel {
     max-height: 62%;
   }
-  .has-sel .panel {
-    max-height: 62%;
+  /* 拖动时高度跟手，不要过渡动画 */
+  .panel.dragging {
+    transition: none;
   }
 }
 
@@ -585,12 +644,19 @@ const levelText = (p: Place) => (p.levels ? `${p.levels} 层` : '')
 }
 
 @media (max-width: 767px) {
+  /* 整条都能拖：比看到的小横条高得多，手指容易按到 */
   .grab {
     display: flex;
     justify-content: center;
     flex: none;
-    width: 100%;
-    padding: 10px 0 8px;
+    width: calc(100% + 32px);
+    margin: 0 -16px;
+    padding: 12px 0 10px;
+    touch-action: none;
+    cursor: grab;
+  }
+  .panel.dragging .grab {
+    cursor: grabbing;
   }
 }
 

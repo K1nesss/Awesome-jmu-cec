@@ -1,61 +1,72 @@
 <script setup lang="ts">
-// 顶栏的「校园地图」图标：紧挨主题切换按钮（宽屏）；手机上在菜单按钮左边
+// 顶栏右侧的图标按钮（挂在 nav-bar-content-after 插槽）：
+//   - 校园地图：宽屏排在主题切换按钮右侧；平板在「…」菜单旁；手机在 ☰ 左侧
+//   - 主题切换：手机上也直接放在顶栏（宽屏由默认主题的位置显示，平板在「…」菜单里），不再藏进 ☰ 菜单
+// 两个按钮用同一套尺寸和配色（与 ThemeToggle.vue 一致：36px、图标 18px、线宽 1.8、灰色→悬停变亮）
 import { computed } from 'vue'
 import { useData, withBase } from 'vitepress'
+import ThemeToggle from './ThemeToggle.vue'
 
 const { page } = useData()
 const active = computed(() => page.value.relativePath === 'map/index.md')
 </script>
 
 <template>
-  <a class="NavMapLink" :class="{ active }" :href="withBase('/map/')" aria-label="校园地图" title="校园地图" :aria-current="active ? 'page' : undefined">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" /><path d="M9 4v14M15 6v14" /></svg>
-  </a>
+  <span class="NavIcons">
+    <span class="mobile-theme"><ThemeToggle /></span>
+    <a class="NavMapLink" :class="{ active }" :href="withBase('/map/')" aria-label="校园地图" title="校园地图" :aria-current="active ? 'page' : undefined">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" /><path d="M9 4v14M15 6v14" /></svg>
+    </a>
+  </span>
 </template>
 
 <style scoped>
-.NavMapLink {
+.NavIcons {
   display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 主题按钮只在手机顶栏显示 */
+.mobile-theme {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-theme {
+    display: flex;
+  }
+}
+
+.NavMapLink {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: 8px;
+  color: var(--vp-c-text-2);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.NavMapLink:hover {
   color: var(--vp-c-text-1);
-  transition: background-color 0.2s;
+  background-color: var(--vp-c-default-soft);
 }
 
-.NavMapLink:hover,
+/* 当前就在地图页：图标变亮（不加边框，和主题按钮保持同一种样子） */
 .NavMapLink.active {
-  background: var(--vp-c-default-soft);
-}
-
-.NavMapLink.active {
-  outline: 1px solid currentColor;
+  color: var(--vp-c-text-1);
 }
 
 .NavMapLink svg {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-/* 宽屏：排在主题切换按钮右侧、GitHub 图标左侧（顶栏内容区是 flex，用 order 调整位置） */
-@media (min-width: 1280px) {
-  .NavMapLink {
-    order: 1;
-    margin-left: 4px;
-  }
-}
-
-@media (max-width: 767px) {
-  .NavMapLink {
-    margin-right: 2px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

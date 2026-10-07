@@ -116,7 +116,7 @@
 
 /* 768–1279px：「…」菜单按钮自带负的右边距，地图图标要让开一点 */
 @media (min-width: 768px) and (max-width: 1279px) {
-  .VPNavBar .content-body > .NavMapLink {
+  .VPNavBar .content-body > .NavIcons {
     margin-left: 14px;
   }
 }
@@ -245,6 +245,13 @@
 .VPNavBarExtra .item.appearance:has(.ThemeToggle:focus-visible) {
   outline: 2px solid #faf9f5;
   outline-offset: 2px;
+}
+
+/* 手机：主题按钮已经直接放在顶栏（NavMapLink.vue），☰ 菜单里不再重复 */
+@media (max-width: 767px) {
+  .VPNavScreenAppearance {
+    display: none !important;
+  }
 }
 
 /* 不使用默认主题顶栏下方的「菜单 / 本页目录」栏（手机与平板）：
@@ -425,8 +432,14 @@ html.jc-viewer-open {
   overflow: hidden;
 }
 
-/* 顶栏的校园地图图标（NavMapLink.vue，挂在 nav-bar-content-after 插槽）：
+/* 顶栏的校园地图图标（NavMapLink.vue 的 .NavIcons，挂在 nav-bar-content-after 插槽）：
    宽屏时排到主题切换按钮右边——把 GitHub 图标和「…」菜单往后排 */
+@media (min-width: 1280px) {
+  .VPNavBar .content-body > .NavIcons {
+    order: 1;
+    margin-left: 2px;
+  }
+}
 @media (min-width: 1280px) {
   .VPNavBar .content-body > .social-links,
   .VPNavBar .content-body > .extra,
@@ -441,4 +454,12 @@ html.jc-viewer-open {
   .VPNavBarMenu .VPFlyout .button {
     padding: 0 4px;
   }
+}
+
+/* 校园地图页（CampusMap.vue 挂载时给 <html> 加 jc-map-page）：页面本身不滚动，
+   手机上拖动地图或底部面板时整页不会跟着上下滑 */
+html.jc-map-page,
+html.jc-map-page body {
+  overflow: hidden;
+  overscroll-behavior: none;
 }

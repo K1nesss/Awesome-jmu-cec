@@ -6,8 +6,7 @@ export interface MapPreview {
   w: number
   h: number
   campus: string
-  buildings: string // 普通建筑
-  highlight: string // 图书馆、食堂（预览里用深色突出）
+  buildings: string
   water: string
 }
 
@@ -38,8 +37,7 @@ function buildPreview(geo: any) {
     w: W,
     h: H,
     campus: path(zone),
-    buildings: path(blds.filter((f: any) => !['图书馆', '食堂'].includes(f.properties.cat))),
-    highlight: path(blds.filter((f: any) => ['图书馆', '食堂'].includes(f.properties.cat))),
+    buildings: path(blds),
     water: path(geo.features.filter((f: any) => f.properties.k === 'water' && within(f))),
   }
 }
