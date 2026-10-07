@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
 import { GROUPS, SECTIONS } from './sections'
-import { genSidebar } from '../../scripts/gen-sidebar.mjs'
+import { countArticles, genSidebar } from '../../scripts/gen-sidebar.mjs'
 
 // 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
@@ -10,6 +10,14 @@ import { genSidebar } from '../../scripts/gen-sidebar.mjs'
 export const BASE = '/'
 
 const REPO = 'https://github.com/K1nesss/Awesome-jmu-cec'
+
+const DOCS_DIR = fileURLToPath(new URL('..', import.meta.url))
+
+// 每个板块的文章数：还没有文章的板块，在顶栏下拉和手机菜单里标注「征稿中」并降低存在感
+// （菜单项文字由默认主题以 HTML 渲染，所以可以带一个小标签；样式见 polish.css 的 .jc-empty-tag）
+const ARTICLE_COUNTS = countArticles(DOCS_DIR, SECTIONS)
+const navLabel = (text: string, key: string) =>
+  ARTICLE_COUNTS[key] ? text : `<span class="jc-empty">${text}</span><span class="jc-empty-tag">征稿中</span>`
 
 export default defineConfig({
   title: 'Awesome JMU CEC',
@@ -105,7 +113,7 @@ export default defineConfig({
       // 三个大类各一个下拉菜单（sections.ts）；当前页面所在大类的按钮带下划线
       ...GROUPS.map((g) => ({
         text: g.navText,
-        items: g.sections.map(({ text, link }) => ({ text, link })),
+        items: g.sections.map(({ text, link, key }) => ({ text: navLabel(text, key), link })),
         activeMatch: `^/(${g.sections.map((x) => x.key).join('|')})/`,
       })),
       { text: '投稿', link: '/contribute/' },
@@ -126,7 +134,7 @@ export default defineConfig({
     // 默认主题在 zh-Hans 下不会自动翻译这些 UI 文案（PLAN.md §12-2）
     // 侧栏：按目录自动生成（scripts/gen-sidebar.mjs）；板块还没有文章时不显示侧栏
     // 新增文章后需重启 npm run dev 才会进侧栏（线上构建不受影响）
-    sidebar: genSidebar(fileURLToPath(new URL('..', import.meta.url)), SECTIONS),
+    sidebar: genSidebar(DOCS_DIR, SECTIONS),
 
     outline: { level: [2, 3], label: '本页目录' },
     docFooter: { prev: '上一篇', next: '下一篇' },

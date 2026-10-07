@@ -70,3 +70,17 @@ test('没有文章的板块、不存在的板块不生成侧栏', () => {
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test('countArticles：统计文章数，不含 index、草稿与隐藏文章', async () => {
+  const { countArticles } = await import('../scripts/gen-sidebar.mjs')
+  const root = fixture()
+  try {
+    const c = countArticles(root, [...SECTIONS, { key: 'nope', text: '不存在', link: '/nope/' }])
+    // baoyan：timeline、camp、no-title、broken + 2 篇经验帖 = 6（secret 隐藏、_draft 草稿不计）
+    assert.equal(c.baoyan, 6)
+    assert.equal(c.abroad, 0)
+    assert.equal(c.nope, 0)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})

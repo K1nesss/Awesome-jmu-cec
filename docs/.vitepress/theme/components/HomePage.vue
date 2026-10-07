@@ -1,8 +1,28 @@
 <script setup lang="ts">
 // 首页（docs/index.md 使用 layout: page 并只渲染本组件）
-// 结构：开场 + 搜索入口 → 四年路线（本页的视觉重心）→ 全部板块目录（按三个大类分栏）→ 投稿号召
+// 结构：开场 + 搜索入口（右侧最近更新）→ 四年路线（本页的视觉重心）→ 全部板块目录（按三个大类分栏）→ 投稿号召
+import { computed } from 'vue'
 import { withBase } from 'vitepress'
 import { GROUPS, sectionByKey } from '../../sections'
+import { data as articles } from '../articles.data'
+
+// 每个板块的文章数（目录里显示「N 篇」或「征稿中」）
+const counts = computed(() => {
+  const c: Record<string, number> = {}
+  for (const a of articles) c[a.section] = (c[a.section] || 0) + 1
+  return c
+})
+
+// 最近更新：按最后更新时间取前 5 篇
+const recent = computed(() => [...articles].sort((a, b) => b.updated - a.updated || a.title.localeCompare(b.title, 'zh-Hans-CN')).slice(0, 5))
+
+// 日期按北京时间格式化：服务端渲染（构建机可能是 UTC）与浏览器结果一致，不会出现日期差一天
+const DATE_FMT = new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric' })
+const fmtDate = (ms: number) => {
+  if (!ms) return ''
+  const parts = Object.fromEntries(DATE_FMT.formatToParts(ms).map((x) => [x.type, x.value]))
+  return `${parts.month}月${parts.day}日`
+}
 
 interface Stage {
   year: string
@@ -49,19 +69,37 @@ function openSearch() {
   <div class="Home">
     <!-- 开场 -->
     <section class="intro">
-      <div class="wrap">
-        <h1 class="headline">大学四年，<br />少走一点弯路。</h1>
-        <p class="lede">
-          导师与科研、竞赛、保研、考研、求职——学长学姐踩过的坑和摸清的门道，整理成可以搜索的文章。面向集美大学计算机工程学院本科生。
-        </p>
-        <button type="button" class="search" @click="openSearch">
-          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" />
-          </svg>
-          <span class="search-text">搜索保研、竞赛、转专业……</span>
-          <kbd class="search-key">Ctrl K</kbd>
-        </button>
+      <div class="wrap intro-grid">
+        <div class="intro-main">
+          <h1 class="headline">大学四年，<br />少走一点弯路。</h1>
+          <p class="lede">
+            导师与科研、竞赛、保研、考研、求职——学长学姐踩过的坑和摸清的门道，整理成可以搜索的文章。面向集美大学计算机工程学院本科生。
+          </p>
+          <button type="button" class="search" @click="openSearch">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <span class="search-text">搜索保研、竞赛、转专业……</span>
+            <kbd class="search-key">Ctrl K</kbd>
+          </button>
+        </div>
+
+        <!-- 最近更新 -->
+        <aside v-if="recent.length" class="recent" aria-labelledby="recent-title">
+          <h2 id="recent-title" class="recent-title">最近更新</h2>
+          <ol class="recent-list">
+            <li v-for="a in recent" :key="a.url">
+              <a class="recent-item" :href="withBase(a.url)">
+                <span class="recent-name">{{ a.title }}</span>
+                <span class="recent-meta">
+                  <span>{{ sectionByKey(a.section).text }}</span>
+                  <time v-if="a.updated" :datetime="new Date(a.updated).toISOString()">{{ fmtDate(a.updated) }}</time>
+                </span>
+              </a>
+            </li>
+          </ol>
+        </aside>
       </div>
     </section>
 
@@ -94,8 +132,11 @@ function openSearch() {
             <p class="group-desc">{{ g.desc }}</p>
             <ul class="dir-list">
               <li v-for="s in g.sections" :key="s.key">
-                <a class="dir-item" :href="withBase(s.link)">
-                  <span class="dir-name">{{ s.text }}</span>
+                <a class="dir-item" :class="{ empty: !counts[s.key] }" :href="withBase(s.link)">
+                  <span class="dir-head">
+                    <span class="dir-name">{{ s.text }}</span>
+                    <span class="dir-count">{{ counts[s.key] ? `${counts[s.key]} 篇` : '征稿中' }}</span>
+                  </span>
                   <span class="dir-desc">{{ s.desc }}</span>
                 </a>
               </li>
@@ -232,6 +273,71 @@ function openSearch() {
 
 @media (max-width: 639px) {
   .search-key { display: none; }
+}
+
+/* 开场两栏：左侧标题与搜索，右侧最近更新（< 960px 时上下排列） */
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+
+@media (min-width: 960px) {
+  .intro-grid {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: center;
+    gap: 64px;
+  }
+}
+
+.recent-title {
+  margin: 0 0 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--home-ink);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--home-ink);
+}
+
+.recent-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recent-list li + li {
+  border-top: 1px solid var(--home-rule);
+}
+
+.recent-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0;
+  color: inherit;
+}
+
+.recent-name {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--home-ink);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s;
+}
+
+.recent-item:hover .recent-name {
+  text-decoration-color: currentColor;
+}
+
+.recent-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--vp-c-text-3);
 }
 
 /* ---------- 四年路线 ---------- */
@@ -395,6 +501,24 @@ function openSearch() {
   color: inherit;
 }
 
+.dir-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dir-count {
+  flex: none;
+  font-size: 12px;
+  color: var(--vp-c-text-3);
+}
+
+/* 还没有文章的板块：标题变淡，提示「征稿中」 */
+.dir-item.empty .dir-name {
+  color: var(--vp-c-text-2);
+}
+
 .dir-name {
   font-size: 17px;
   font-weight: 600;
@@ -497,6 +621,7 @@ function openSearch() {
   .search,
   .stage-links a,
   .dir-name,
+  .recent-name,
   .btn-primary {
     transition: none;
   }

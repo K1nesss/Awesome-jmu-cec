@@ -101,3 +101,31 @@ export function genSidebar(docsDir, sections) {
   }
   return sidebar
 }
+
+/**
+ * 统计每个板块已发布的文章数（规则与侧栏一致：不含各级 index.md、下划线开头的草稿、hidden: true）
+ * 供顶栏下拉与手机菜单标注「征稿中」。任何异常按 0 篇处理。
+ * @returns {Record<string, number>} 键为板块目录名
+ */
+export function countArticles(docsDir, sections) {
+  const counts = {}
+  const walk = (dir) => {
+    let n = 0
+    for (const ent of readdirSync(dir, { withFileTypes: true })) {
+      if (ent.name.startsWith('.') || ent.name.startsWith('_')) continue
+      const full = join(dir, ent.name)
+      if (ent.isDirectory()) n += walk(full)
+      else if (ent.name.endsWith('.md') && ent.name !== 'index.md' && !readPage(full, ent.name).hidden) n++
+    }
+    return n
+  }
+  for (const s of sections) {
+    try {
+      const dir = join(docsDir, s.key)
+      counts[s.key] = existsSync(dir) ? walk(dir) : 0
+    } catch {
+      counts[s.key] = 0
+    }
+  }
+  return counts
+}
