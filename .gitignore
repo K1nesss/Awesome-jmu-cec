@@ -1,3 +1,6 @@
 node_modules/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+
+# 内部规划文档：只留在本地，不上传到仓库
+PLAN.md

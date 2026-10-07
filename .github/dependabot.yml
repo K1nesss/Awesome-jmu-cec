@@ -1,4 +1,4 @@
-# 依赖自动更新：actions 每周、npm 每月分组（字体归一组）（PLAN.md §8.4）
+# 依赖自动更新：actions 每周、npm 每月分组（字体归一组）
 version: 2
 updates:
   - package-ecosystem: github-actions

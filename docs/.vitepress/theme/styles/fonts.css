@@ -1,4 +1,4 @@
-/* 中文排版（PLAN.md §4.4 / §4.6）：字体栈见 vars.css 的 --vp-font-family-base，零字体下载 */
+/* 中文排版：字体栈见 vars.css 的 --vp-font-family-base，零字体下载 */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   letter-spacing: 0.01em;

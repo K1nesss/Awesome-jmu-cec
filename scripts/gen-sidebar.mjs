@@ -1,4 +1,4 @@
-// 侧栏自动生成（PLAN.md §6.2）：扫描 docs/<板块>/ 下的 .md，读 frontmatter，产出 VitePress 多侧栏对象。
+// 侧栏自动生成：扫描 docs/<板块>/ 下的 .md，读 frontmatter，产出 VitePress 多侧栏对象。
 // 贡献者新增文章 = 新建一个 .md，无需改任何配置。
 //
 // 规则：

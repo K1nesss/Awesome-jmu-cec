@@ -10,9 +10,8 @@ import { countArticles, genSidebar } from '../../scripts/gen-sidebar.mjs'
 import { loadEvents, toICS } from '../../scripts/calendar.mjs'
 import { readCachedData } from '../../scripts/github.mjs'
 
-// 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
+// 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管）
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
-// （M3 起 sitemap/OG 均从本常量读取，见 PLAN.md §12-10）
 export const BASE = '/'
 
 // 站点正式地址（不带结尾斜杠）：sitemap、分享卡片的绝对链接都从这里拼。换自定义域名时只改这一处
@@ -126,7 +125,7 @@ export default defineConfig({
     }
   },
 
-  // head 条目不会自动补 base（PLAN.md §12-1），手动拼接
+  // head 条目不会自动补 base，手动拼接
   head: [
     // 网站图标「J_」：终端光标风格（JetBrains Mono Bold 的 J + 与笔画同粗的光标条，四边对称留白）
     // SVG 给现代浏览器；32px PNG 给不支持 SVG 图标的浏览器；180px 给苹果设备「添加到主屏幕」；manifest 给安卓
@@ -162,7 +161,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    // 中文搜索：索引端与查询端必须是同一个分词函数（PLAN.md §5.2）
+    // 中文搜索：索引端与查询端必须是同一个分词函数
     // cjkTokenize 会被序列化下发到浏览器，务必保持自包含（见该文件顶部警告）
     search: {
       provider: 'local',
@@ -233,7 +232,7 @@ export default defineConfig({
       message: '非集美大学官方项目，内容来自同学投稿，仅供参考，请以学校与学院最新通知为准。',
     },
 
-    // 默认主题在 zh-Hans 下不会自动翻译这些 UI 文案（PLAN.md §12-2）
+    // 默认主题在 zh-Hans 下不会自动翻译这些 UI 文案
     // 侧栏：按目录自动生成（scripts/gen-sidebar.mjs）；板块还没有文章时不显示侧栏
     // 新增文章后需重启 npm run dev 才会进侧栏（线上构建不受影响）
     sidebar: genSidebar(DOCS_DIR, SECTIONS),

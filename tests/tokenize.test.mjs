@@ -1,5 +1,5 @@
 // cjkTokenize 回归测试（node --test，零额外依赖）
-// 与 docs/.vitepress/search/cjkTokenize.mjs 同源导入，防搜索回归（PLAN.md §5.5）
+// 与 docs/.vitepress/search/cjkTokenize.mjs 同源导入，防搜索回归
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cjkTokenize } from '../docs/.vitepress/search/cjkTokenize.mjs'

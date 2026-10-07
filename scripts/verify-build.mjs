@@ -1,4 +1,4 @@
-// 构建后断言：dist 存在 + base 前缀正确 + 本地搜索索引存在（PLAN.md §8.5）。
+// 构建后断言：dist 存在 + base 前缀正确 + 本地搜索索引存在。
 // 用法：npm run build 之后执行 `node scripts/verify-build.mjs`（CI 已接入 deploy/ci 工作流）。
 // M4 种子内容落地后，在 KEYWORDS 填入中文关键词表以启用索引内容冒烟检查。
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'

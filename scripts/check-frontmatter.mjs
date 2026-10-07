@@ -1,4 +1,4 @@
-// frontmatter 温和校验（PLAN.md §7.2）。
+// frontmatter 温和校验。
 // 设计原则：永不 exit 非零——校验只提示，不阻断构建。
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
