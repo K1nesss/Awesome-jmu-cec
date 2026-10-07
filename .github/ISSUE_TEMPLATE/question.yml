@@ -1,0 +1,39 @@
+name: 提问
+description: 有关学院、学习、升学或就业的问题。提问会显示在网站的「问答」页和对应板块，关闭后自动消失
+title: "[提问] "
+labels: ["提问"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提问会**公开显示**在本站的「问答」页和对应板块首页，同学和学长学姐可以在下面回复。问题解决后请点击 **Close issue** 关闭，它会从网站上自动消失。
+
+        请不要写自己或他人的姓名、学号、联系方式；涉及具体老师时只问公开信息，不要求评价老师。
+  - type: dropdown
+    id: section
+    attributes:
+      label: 板块
+      description: 问题最接近哪个板块？会显示在该板块首页。
+      options:
+        - 学院与专业
+        - 导师与科研
+        - 大学四年规划
+        - 课程与学业
+        - 竞赛
+        - 奖学金
+        - 校园生活
+        - 保研
+        - 考研
+        - 就业与实习
+        - 考公·选调
+        - 留学
+        - 不确定 / 其他
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: 问题详情
+      description: 把背景写清楚更容易得到回答，例如年级、专业方向、已经了解到的情况。
+    validations:
+      required: true

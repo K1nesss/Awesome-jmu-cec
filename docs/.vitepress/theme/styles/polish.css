@@ -114,6 +114,17 @@
   }
 }
 
+/* 1280–1439px：菜单项多（含「日历」「问答」），搜索框收窄一点、菜单间距收紧，避免与搜索框挤在一起 */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .VPNavBarSearch .DocSearch-Button {
+    width: 164px;
+  }
+  .VPNavBarMenu .VPNavBarMenuLink,
+  .VPNavBarMenu .VPFlyout .button {
+    padding: 0 10px;
+  }
+}
+
 /* 「板块」下拉菜单：默认右对齐按钮，改为在按钮正下方居中。
    用独立的 translate 属性居中，不占用 NavFlyout.vue 里做展开动画的 transform */
 .VPNavBarMenuGroup .menu {

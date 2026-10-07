@@ -63,5 +63,13 @@ for (const kw of SYNONYM_ONLY) {
   const missing = cjkTokenize(kw).filter((t) => !searchIndex.toLowerCase().includes(t.toLowerCase()) && !searchIndex.includes(escape(t)))
   if (missing.length) fail(`同义词「${kw}」没有进入搜索索引，检查 config.mts 的 search._render`)
 }
+// 贡献者头像：构建时下载成功的头像必须随站点发布（否则关于页会退回 GitHub 地址，国内加载慢）
+const ghCache = join(DIST, '..', 'cache', 'github', 'github-data.json')
+if (existsSync(ghCache)) {
+  const gh = JSON.parse(readFileSync(ghCache, 'utf8'))
+  for (const c of gh.contributors ?? []) {
+    if (c.local && !existsSync(join(DIST, c.local))) fail(`贡献者 ${c.login} 的头像 ${c.local} 没有发布到构建产物里`)
+  }
+}
 const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项、同义词 ${SYNONYM_ONLY.length} 项全部命中` : ''
 console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常${extra}`)

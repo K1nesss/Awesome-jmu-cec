@@ -1,0 +1,5 @@
+# 「关于本站」页贡献者头像墙的设置（头像与名单在每次构建时从 GitHub 读取，见 scripts/github.mjs）
+#
+# exclude：不显示在头像墙上的 GitHub 用户名。本人不想公开头像，或者不是真人同学的账号，都写在这里。
+exclude:
+  - claude # 用 AI 助手 Claude 生成的提交被 GitHub 关联到了这个同名账号，它不是本站的同学

@@ -4,6 +4,8 @@ import DefaultTheme from 'vitepress/theme'
 import HomePage from './components/HomePage.vue'
 import ArticleList from './components/ArticleList.vue'
 import EventCalendar from './components/EventCalendar.vue'
+import QuestionList from './components/QuestionList.vue'
+import Contributors from './components/Contributors.vue'
 import ArticleMeta from './components/ArticleMeta.vue'
 import SectionNav from './components/SectionNav.vue'
 import ReadingAids from './components/ReadingAids.vue'
@@ -36,5 +38,7 @@ export default {
     app.component('HomePage', HomePage) // 首页
     app.component('ArticleList', ArticleList) // 板块首页的文章列表
     app.component('EventCalendar', EventCalendar) // 重要日期页面
+    app.component('QuestionList', QuestionList) // 问答页（板块首页的「本板块的提问」由 ArticleList 引用）
+    app.component('Contributors', Contributors) // 关于页的贡献者
   },
 } satisfies Theme

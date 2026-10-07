@@ -4,10 +4,11 @@ import { cjkTokenize } from './search/cjkTokenize.mjs'
 import { figurePlugin } from './markdown/figure.mjs'
 import { expandSynonyms, injectSearchTerms, normalizeKeywords } from './search/synonyms.mjs'
 import { GROUPS, REPO, SECTIONS } from './sections'
-import { writeFileSync } from 'node:fs'
+import { cpSync, existsSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { countArticles, genSidebar } from '../../scripts/gen-sidebar.mjs'
 import { loadEvents, toICS } from '../../scripts/calendar.mjs'
+import { readCachedData } from '../../scripts/github.mjs'
 
 // 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
@@ -60,6 +61,17 @@ export default defineConfig({
     const { events, warnings } = loadEvents(join(DOCS_DIR, 'calendar', 'events.yaml'))
     for (const w of warnings) console.warn(`⚠️ 重要日期：${w}`)
     writeFileSync(join(siteConfig.outDir, 'calendar.ics'), toICS(events))
+
+    // 贡献者头像：构建时下载到缓存目录（theme/github.data.ts），这里随站点一起发布到 /avatars/
+    const ghCache = join(DOCS_DIR, '.vitepress', 'cache', 'github')
+    const gh = readCachedData(ghCache)
+    // 只发布当前名单里的头像（缓存目录里可能还留着已加入 exclude 名单的人的头像）
+    for (const c of gh?.contributors ?? []) {
+      const name = c.local?.replace(/^\/avatars\//, '')
+      if (name && existsSync(join(ghCache, 'avatars', name))) {
+        cpSync(join(ghCache, 'avatars', name), join(siteConfig.outDir, 'avatars', name))
+      }
+    }
   },
 
   // head 条目不会自动补 base（PLAN.md §12-1），手动拼接
@@ -148,6 +160,7 @@ export default defineConfig({
         activeMatch: `^/(${g.sections.map((x) => x.key).join('|')})/`,
       })),
       { text: '日历', link: '/calendar/' },
+      { text: '问答', link: '/questions/' },
       { text: '投稿', link: '/contribute/' },
       { text: '关于', link: '/about/' },
     ],

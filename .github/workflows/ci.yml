@@ -21,4 +21,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+        # 构建时读取提问与贡献者（scripts/github.mjs）；用本次运行自带的令牌，避免未登录的频率限制
+        env:
+          GITHUB_READ_TOKEN: ${{ github.token }}
       - run: node scripts/verify-build.mjs

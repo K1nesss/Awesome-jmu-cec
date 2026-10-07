@@ -28,3 +28,9 @@ description: Awesome JMU CEC 是由同学维护的非官方信息差百科。
 ## 参与维护
 
 本站源码与全部文章都在 [GitHub](https://github.com/K1nesss/Awesome-jmu-cec) 上公开。想成为作者或维护者，先从 [投稿](/contribute/) 开始吧。
+
+## 贡献者
+
+感谢每一位写文章、改错字、回答提问的同学。
+
+<Contributors />

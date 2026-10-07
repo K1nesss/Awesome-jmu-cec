@@ -2,9 +2,11 @@
 // 板块首页的文章列表：在 docs/<板块>/index.md 里写 <ArticleList /> 即可。
 // - 自动列出本板块的「指南」与「经验帖」（数据来自 articles.data.ts，新增 .md 自动出现）
 // - frontmatter.planned 里的选题若还没人写，显示在「待认领选题」中；写好后（标题一致）自动从待认领移除
+// - 末尾是本板块还没关闭的提问（QuestionList.vue）
 import { computed } from 'vue'
 import { useData, withBase } from 'vitepress'
 import { data as articles } from '../articles.data'
+import QuestionList from './QuestionList.vue'
 
 const { page, frontmatter } = useData()
 
@@ -74,6 +76,9 @@ const expMeta = (a: { year: number | null; author: string }) =>
         <li v-for="t in planned" :key="t">{{ t }}</li>
       </ul>
     </section>
+
+    <!-- 本板块还没关闭的提问（GitHub「提问」issue，构建时读取） -->
+    <QuestionList :section="section" :limit="5" />
   </div>
 </template>
 

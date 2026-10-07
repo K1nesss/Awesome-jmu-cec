@@ -1,0 +1,33 @@
+# 有人提问、关闭提问或回复提问时，触发 Cloudflare Pages 重新构建，让网站上的问答列表在一两分钟内同步。
+# 需要在仓库 Settings → Secrets and variables → Actions 里配置 CLOUDFLARE_DEPLOY_HOOK（Cloudflare Pages 的 Deploy hook 地址）。
+# 只处理带「提问」标签的 issue；纠错、补充等其他 issue 不触发构建。
+name: 同步问答到网站
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled, deleted, transferred]
+  issue_comment:
+    types: [created, deleted]
+permissions: {}
+# 短时间内连续多次操作（比如一口气关闭好几个提问）只触发最后一次构建
+concurrency:
+  group: rebuild-site
+  cancel-in-progress: true
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    if: >-
+      contains(github.event.issue.labels.*.name, '提问') ||
+      (github.event.label && github.event.label.name == '提问')
+    steps:
+      - name: 等待 30 秒（合并连续操作）
+        run: sleep 30
+      - name: 触发 Cloudflare Pages 构建
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::没有配置 CLOUDFLARE_DEPLOY_HOOK，跳过"
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "已触发 Cloudflare Pages 重新构建"
