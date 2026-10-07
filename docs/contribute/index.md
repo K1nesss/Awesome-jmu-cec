@@ -131,6 +131,10 @@ docs/baoyan/
 
 [重要日期](/calendar/)页面的数据在 [`docs/calendar/events.yaml`](https://github.com/K1nesss/Awesome-jmu-cec/edit/main/docs/calendar/events.yaml)，文件开头有填写说明。规则只有一条：**每个日期都要附官方来源链接**；还没正式公布的日期，用 `tentative` 写成「预计 10 月中旬」这样的文字，不要写成具体某一天。
 
+## 修正校园地图
+
+[校园地图](/map/)的建筑和楼名来自 OpenStreetMap。地点名字不对、想加个别名或简介、想把地点和文章关联起来，编辑 [`docs/map/places.yaml`](https://github.com/K1nesss/Awesome-jmu-cec/edit/main/docs/map/places.yaml)，文件开头有填写说明。缺了整栋楼或者轮廓不对，请在问答页说明，维护者会更新地图数据。
+
 ## 涉及老师的内容
 
 写到具体老师时（尤其是「导师与科研」板块），**只写公开信息**：研究方向、所在实验室、官方主页链接、招收本科生的方式，以及你自己进组、做科研的亲身经历。**不写对老师个人的评分、排名、评价或传闻**，不符合规则的投稿不会被合并。

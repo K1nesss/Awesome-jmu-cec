@@ -88,5 +88,10 @@ for (const needle of [
 ]) {
   if (!articleHtml.includes(needle)) fail(`文章页缺少分享卡片标签：${needle}`)
 }
+// 校园地图：数据文件随站点发布；places.yaml 的人工修正生效（服务端渲染的地点列表里能看到改过的名字）
+if (!existsSync(join(DIST, 'map', 'campus.geojson'))) fail('缺少校园地图数据 map/campus.geojson（运行 npm run map:build）')
+const mapHtml = existsSync(join(DIST, 'map', 'index.html')) ? readFileSync(join(DIST, 'map', 'index.html'), 'utf8') : ''
+if (!mapHtml.includes('嘉庚图书馆')) fail('校园地图页没有渲染出地点列表')
+if (mapHtml.includes('拼多多')) fail('docs/map/places.yaml 的改名没有生效')
 const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项、同义词 ${SYNONYM_ONLY.length} 项全部命中` : ''
-console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常、站点地图与分享卡片正常${extra}`)
+console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常、站点地图与分享卡片正常、校园地图数据正常${extra}`)

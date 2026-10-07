@@ -7,6 +7,7 @@ import { GROUPS, sectionByKey } from '../../sections'
 import { data as articles } from '../articles.data'
 import { data as calendar } from '../events.data'
 import { statusOf, statusText } from '../calendar'
+import { data as mapPreview } from '../mapPreview.data'
 
 // 下一个节点：最近一个尚未结束、且日期已确定的事件（日历页的第一项）
 // 首次渲染用构建时间，挂载后换成浏览器当前时间，避免服务端与浏览器渲染不一致
@@ -151,6 +152,23 @@ function openSearch() {
           </ol>
         </aside>
       </div>
+    </section>
+
+    <!-- 校园地图入口：右侧是主校区的建筑平面（构建时由 OpenStreetMap 数据生成，随明暗模式变色） -->
+    <section class="campus-map" aria-labelledby="map-title">
+      <a class="wrap map-card" :href="withBase('/map/')">
+        <div class="map-text">
+          <h2 id="map-title" class="section-title map-title">校园地图</h2>
+          <p class="map-desc">3D 建筑、搜索教学楼和食堂，手机上能显示你在哪里。新生找教室、找宿舍都用得上。</p>
+          <span class="map-go">打开地图 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></span>
+        </div>
+        <svg class="map-preview" :viewBox="`0 0 ${mapPreview.w} ${mapPreview.h}`" role="img" aria-label="主校区建筑平面示意">
+          <path class="mp-campus" :d="mapPreview.campus" />
+          <path class="mp-water" :d="mapPreview.water" />
+          <path class="mp-bld" :d="mapPreview.buildings" />
+          <path class="mp-hi" :d="mapPreview.highlight" />
+        </svg>
+      </a>
     </section>
 
     <!-- 四年路线 -->
@@ -460,6 +478,110 @@ function openSearch() {
   gap: 12px;
   font-size: 12px;
   color: var(--vp-c-text-3);
+}
+
+/* ---------- 校园地图入口 ---------- */
+.campus-map {
+  border-top: 1px solid var(--home-rule);
+}
+
+.map-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  color: inherit;
+}
+
+@media (min-width: 640px) {
+  .map-card {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 40px;
+  }
+}
+
+@media (min-width: 960px) {
+  .map-card {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+
+.map-title {
+  margin-bottom: 8px;
+}
+
+.map-desc {
+  margin: 0;
+  max-width: 34em;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--home-muted);
+}
+
+.map-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--home-ink);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--home-ink);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.map-go svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-card:hover .map-go {
+  background: var(--home-ink);
+  color: var(--vp-c-bg);
+}
+
+/* 平面预览：手机上做成一条横向裁切的带子，避免太长 */
+.map-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 340px;
+}
+
+@media (max-width: 639px) {
+  .map-preview {
+    max-height: 220px;
+    order: -1;
+  }
+}
+
+.mp-campus {
+  fill: var(--vp-c-bg-alt);
+  stroke: var(--home-rule);
+  stroke-width: 1;
+}
+
+.mp-water {
+  fill: color-mix(in srgb, var(--home-muted) 22%, var(--vp-c-bg-alt));
+}
+
+.mp-bld {
+  fill: var(--home-muted);
+  opacity: 0.55;
+}
+
+.mp-hi {
+  fill: var(--home-ink);
 }
 
 /* ---------- 四年路线 ---------- */
@@ -802,6 +924,7 @@ function openSearch() {
   .search,
   .stage-links a,
   .stage-tabs button,
+  .map-go,
   .dir-name,
   .recent-name,
   .btn-primary {

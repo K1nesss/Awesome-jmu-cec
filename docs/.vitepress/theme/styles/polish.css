@@ -114,6 +114,20 @@
   }
 }
 
+/* 768–1279px：「…」菜单按钮自带负的右边距，地图图标要让开一点 */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .VPNavBar .content-body > .NavMapLink {
+    margin-left: 14px;
+  }
+}
+
+/* 1280–1359px：同样隐藏「首页」（左侧站名就是首页链接），给搜索框和地图图标留出空间 */
+@media (min-width: 1280px) and (max-width: 1359px) {
+  .VPNavBarMenu .VPNavBarMenuLink[href="/"] {
+    display: none;
+  }
+}
+
 /* 1280–1439px：菜单项多（含「日历」「问答」），搜索框收窄一点、菜单间距收紧，避免与搜索框挤在一起 */
 @media (min-width: 1280px) and (max-width: 1439px) {
   .VPNavBarSearch .DocSearch-Button {
@@ -409,4 +423,22 @@
 /* 手机全屏看图时锁住页面滚动 */
 html.jc-viewer-open {
   overflow: hidden;
+}
+
+/* 顶栏的校园地图图标（NavMapLink.vue，挂在 nav-bar-content-after 插槽）：
+   宽屏时排到主题切换按钮右边——把 GitHub 图标和「…」菜单往后排 */
+@media (min-width: 1280px) {
+  .VPNavBar .content-body > .social-links,
+  .VPNavBar .content-body > .extra,
+  .VPNavBar .content-body > .hamburger {
+    order: 2;
+  }
+}
+
+/* 768–959px：再加上校园地图图标后放不下，菜单间距再收紧一点（放在文件末尾，覆盖上面 768–1279px 的 8px） */
+@media (min-width: 768px) and (max-width: 959px) {
+  .VPNavBarMenu .VPNavBarMenuLink,
+  .VPNavBarMenu .VPFlyout .button {
+    padding: 0 4px;
+  }
 }

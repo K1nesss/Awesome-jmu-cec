@@ -82,6 +82,8 @@ export default defineConfig({
   appearance: true,
 
   vite: {
+    // 校园地图的地图引擎（maplibre-gl，约 1 MB）单独成块、只在 /map/ 页加载，不必为它报体积警告
+    build: { chunkSizeWarningLimit: 1100 },
     resolve: {
       // 覆盖默认主题的内部组件（VitePress 官方支持的方式）：
       // - VPSwitchAppearance：明暗滑块 → 三态主题图标按钮（跟随系统 / 浅色 / 深色）

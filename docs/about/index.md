@@ -29,6 +29,8 @@ description: Awesome JMU CEC 是由同学维护的非官方信息差百科。
 
 本站用 [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) 统计访问量（页面浏览次数、来源网站、设备类型等汇总数据），用来了解哪些板块最有用。它**不使用 Cookie、不记录个人身份**，也不跨网站追踪。除此之外，本站没有其他统计、广告或第三方追踪；问答列表和贡献者头像都在构建时生成，浏览本站不会向 GitHub 发送请求。
 
+[校园地图](/map/)的「显示我的位置」只在你点击后才会请求定位权限，位置只在你的浏览器里用来画出你在地图上的点，不会上传或保存。地图数据来自 [OpenStreetMap](https://www.openstreetmap.org/copyright)，是示意图，不是学校官方地图。
+
 ## 参与维护
 
 本站源码与全部文章都在 [GitHub](https://github.com/K1nesss/Awesome-jmu-cec) 上公开。想成为作者或维护者，先从 [投稿](/contribute/) 开始吧。
