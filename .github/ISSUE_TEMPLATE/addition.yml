@@ -1,0 +1,36 @@
+name: 补充内容
+description: 给文章补充信息、经验或资料
+title: "[补充] "
+labels: ["补充"]
+body:
+  - type: markdown
+    attributes:
+      value: 谢谢你愿意补充！篇幅较长、想署名发布的内容，也可以直接按「参与贡献」页面的方法投稿。
+  - type: input
+    id: page
+    attributes:
+      label: 页面地址
+      placeholder: https://…
+    validations:
+      required: true
+  - type: textarea
+    id: content
+    attributes:
+      label: 想补充的内容
+      description: 写清是哪一年的情况；不要出现他人的姓名、学号、联系方式。
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 来源（可选）
+      description: 官方链接，或者「本人亲历」。
+  - type: input
+    id: author
+    attributes:
+      label: 署名（可选）
+      description: 采纳后希望怎样署名；留空则不署名。
+  - type: input
+    id: file
+    attributes:
+      label: 源文件（自动填写，不用改）

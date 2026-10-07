@@ -7,10 +7,9 @@ import { computed, onMounted, ref } from 'vue'
 import { withBase } from 'vitepress'
 import { data } from '../events.data'
 import type { CalendarEvent } from '../events.data'
-import { SECTIONS } from '../../sections'
+import { REPO, SECTIONS } from '../../sections'
 import { rangeText, singleEventICS, statusOf, statusText, weekday } from '../calendar'
 
-const REPO = 'https://github.com/K1nesss/Awesome-jmu-cec'
 const now = ref(data.builtAt)
 const subscribeUrl = ref('') // webcal://<域名>/calendar.ics，挂载后才知道当前域名
 const httpUrl = ref('')

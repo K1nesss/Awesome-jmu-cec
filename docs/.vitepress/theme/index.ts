@@ -7,6 +7,7 @@ import EventCalendar from './components/EventCalendar.vue'
 import ArticleMeta from './components/ArticleMeta.vue'
 import SectionNav from './components/SectionNav.vue'
 import ReadingAids from './components/ReadingAids.vue'
+import ArticleFeedback from './components/ArticleFeedback.vue'
 import './styles/vars.css'
 import './styles/fonts.css'
 import './styles/polish.css'
@@ -18,6 +19,8 @@ export default {
     h(DefaultTheme.Layout, null, {
       // 文章页正文上方：返回板块、类型 / 年份 / 作者、过时提醒、可折叠目录
       'doc-before': () => h(ArticleMeta),
+      // 文章页正文末尾：报告错误 / 补充内容（跳到 GitHub 预填的 Issue 表单）
+      'doc-footer-before': () => h(ArticleFeedback),
       // 手机菜单（☰）顶部：本板块文章列表
       'nav-screen-content-before': () => h(SectionNav),
       // 全站：回到顶部（带阅读进度环）、锚点跳转高亮

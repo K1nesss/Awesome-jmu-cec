@@ -61,3 +61,14 @@ export const GROUPS: SectionGroup[] = [
 export const SECTIONS: Section[] = GROUPS.flatMap((g) => g.sections)
 
 export const sectionByKey = (key: string) => SECTIONS.find((x) => x.key === key)!
+
+/** GitHub 仓库地址（编辑链接、纠错反馈、投稿入口共用） */
+export const REPO = 'https://github.com/K1nesss/Awesome-jmu-cec'
+
+const SECTION_KEYS = new Set(SECTIONS.map((s) => s.key))
+
+/** 是否板块文章页（不含板块首页 index.md 和 _ 开头的草稿/片段） */
+export function isArticlePath(relativePath: string) {
+  const segs = relativePath.split('/')
+  return SECTION_KEYS.has(segs[0]) && !relativePath.endsWith('index.md') && !segs[segs.length - 1].startsWith('_')
+}

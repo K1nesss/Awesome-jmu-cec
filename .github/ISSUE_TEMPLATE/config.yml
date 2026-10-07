@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 投稿一篇新文章
+    url: https://github.com/K1nesss/Awesome-jmu-cec/blob/main/docs/contribute/index.md
+    about: 按「参与贡献」页面的步骤，在网页上新建文件即可

@@ -10,6 +10,8 @@ const STALE_BASE = '/Awesome-jmu-cec/' // 回退 GitHub Pages 托管时需与 co
 const DIST = join(import.meta.dirname, '..', 'docs', '.vitepress', 'dist')
 // 搜索索引冒烟：这些词必须出现在索引里（M4 种子文章上线后可追加 '蓝桥杯' 等）
 const KEYWORDS = ['保研', '推免', '夏令营', '选调', '转专业', '绩点']
+// 正文里没有、只靠同义词表（search/synonyms.mjs）进索引的词：检查同义词扩展确实生效
+const SYNONYM_ONLY = ['国奖', 'GPA']
 // 只匹配“作为站内路径开头”的旧 base（引号或括号后紧跟），
 // 避免把 editLink / socialLinks 里的 github.com/K1nesss/Awesome-jmu-cec/ 误判为残留
 const STALE_RE = new RegExp(`["'(]${STALE_BASE.replaceAll('.', '\\.')}`)
@@ -57,5 +59,9 @@ for (const kw of KEYWORDS) {
   const missing = cjkTokenize(kw).filter((t) => !searchIndex.includes(t) && !searchIndex.includes(escape(t)))
   if (missing.length) fail(`搜索索引缺少关键词「${kw}」的词元：${missing.join('、')}`)
 }
-const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项全部命中` : ''
+for (const kw of SYNONYM_ONLY) {
+  const missing = cjkTokenize(kw).filter((t) => !searchIndex.toLowerCase().includes(t.toLowerCase()) && !searchIndex.includes(escape(t)))
+  if (missing.length) fail(`同义词「${kw}」没有进入搜索索引，检查 config.mts 的 search._render`)
+}
+const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项、同义词 ${SYNONYM_ONLY.length} 项全部命中` : ''
 console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常${extra}`)

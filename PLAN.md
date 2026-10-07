@@ -353,6 +353,8 @@ Plan A 本方案；Plan B 升级破坏内置搜索时自维护官方搜索组件
 - `editLink`：每页「在 GitHub 上编辑此页」直链网页编辑器——最高性价比的贡献入口。
 - `lastUpdated: true`：页脚「最后更新于」（依赖 git 历史，CI 必须 `fetch-depth: 0`）。
 - `locales.root.lang: 'zh-Hans'` + 显式中文 UI 字符串（见第 12 节实测坑 #2）。
+- **纠错与补充（2026-10）**：文章页正文末尾（`doc-footer-before` 插槽，`ArticleFeedback.vue`）有「报告错误」「补充内容」两个按钮，跳到 `.github/ISSUE_TEMPLATE/correction.yml` / `addition.yml` 表单，通过 URL 参数预填标题、页面地址（`page`）和源文件路径（`file`）；表单字段 id 与参数名必须一致。
+- **搜索同义词（2026-10）**：`docs/.vitepress/search/synonyms.mjs` 维护同义词组（保研/推免、国奖/国家奖学金……）；`search.options._render` 建索引时把文中出现词的同组其他词、以及 frontmatter `keywords` 写进标题所在段（只进索引、不改页面）。verify-build 检查只靠同义词进索引的词（国奖、GPA）确实可搜到。
 - `cleanUrls: true`。已知 dev 细节：新增文件要重启 `npm run dev` 才进侧栏（对贡献者无影响，写入维护者文档）。
 
 ---
@@ -430,6 +432,7 @@ author: 小明                             # 可选：可写「匿名」或「�
 updated: 2026-09-01                      # 可选：内容更新日期（YYYY-MM-DD）
 sidebarTitle: 保研时间线                 # 可选：侧栏短标题
 hidden: false                            # 可选：true = 不进侧栏但页面仍可访问
+keywords: 夏令营, 预推免                 # 可选：正文里没写、但读者会搜的词（常见简称/全称已由同义词表处理）
 ---
 
 # 保研全流程时间线        ← 正文从一级标题开始，与 title 一致即可

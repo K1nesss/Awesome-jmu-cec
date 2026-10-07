@@ -1,7 +1,8 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
-import { GROUPS, SECTIONS } from './sections'
+import { expandSynonyms, injectSearchTerms, normalizeKeywords } from './search/synonyms.mjs'
+import { GROUPS, REPO, SECTIONS } from './sections'
 import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { countArticles, genSidebar } from '../../scripts/gen-sidebar.mjs'
@@ -12,7 +13,6 @@ import { loadEvents, toICS } from '../../scripts/calendar.mjs'
 // （M3 起 sitemap/OG 均从本常量读取，见 PLAN.md §12-10）
 export const BASE = '/'
 
-const REPO = 'https://github.com/K1nesss/Awesome-jmu-cec'
 
 const DOCS_DIR = fileURLToPath(new URL('..', import.meta.url))
 
@@ -88,6 +88,16 @@ export default defineConfig({
       provider: 'local',
       options: {
         detailedView: true,
+        // 建索引时补上同义词和 frontmatter 的 keywords：搜「推免」也能找到只写了「保研」的文章
+        _render(src, env, md) {
+          const html = md.render(src, env)
+          const fm = env.frontmatter ?? {}
+          if (fm.search === false) return ''
+          const have = new Set()
+          const terms = [...normalizeKeywords(fm.keywords), ...expandSynonyms(`${fm.title ?? ''}\n${src}`)]
+            .filter((t) => !have.has(t) && have.add(t))
+          return injectSearchTerms(html, terms)
+        },
         miniSearch: {
           options: { tokenize: cjkTokenize },
           searchOptions: {

@@ -9,16 +9,11 @@
 // 避免服务端渲染不一致；站内跳转时组件会复用，因此不能只在 onMounted 里算一次
 import { computed, nextTick, ref } from 'vue'
 import { onContentUpdated, useData, withBase } from 'vitepress'
-import { SECTIONS, sectionByKey } from '../../sections'
+import { isArticlePath, sectionByKey } from '../../sections'
 
 const { page, frontmatter } = useData()
 
-const SECTION_KEYS = new Set(SECTIONS.map((s) => s.key))
-const isArticle = computed(() => {
-  const path = page.value.relativePath
-  const segs = path.split('/')
-  return SECTION_KEYS.has(segs[0]) && !path.endsWith('index.md') && !segs[segs.length - 1].startsWith('_')
-})
+const isArticle = computed(() => isArticlePath(page.value.relativePath))
 const section = computed(() => (isArticle.value ? sectionByKey(page.value.relativePath.split('/')[0]) : null))
 
 const type = computed(() =>

@@ -16,7 +16,7 @@ function walk(dir) {
 }
 walk(DOCS)
 
-// 温和提示（不阻断）：type 只能是 guide / experience；year 应为四位年份
+// 温和提示（不阻断）：type 只能是 guide / experience；year 应为四位年份；keywords 为字符串或列表
 // 在 GitHub Actions 中以 ::warning 注解输出，会直接标在 PR 的文件上
 const inCI = !!process.env.GITHUB_ACTIONS
 function warn(file, msg) {
@@ -43,6 +43,11 @@ for (const f of files) {
   }
   if (data.year !== undefined && !/^(19|20)\d{2}$/.test(String(data.year))) {
     warn(f, `year 应为四位年份（例如 2026），当前是「${data.year}」`)
+    warnings++
+  }
+  const kw = data.keywords
+  if (kw !== undefined && kw !== null && typeof kw !== 'string' && !(Array.isArray(kw) && kw.every((x) => typeof x === 'string' || typeof x === 'number'))) {
+    warn(f, 'keywords 应写成「词1, 词2」或列表形式，当前格式读不出来，这些词不会进入搜索')
     warnings++
   }
 }
