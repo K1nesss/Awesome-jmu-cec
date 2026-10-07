@@ -32,8 +32,7 @@
 - [内容](#内容)
 - [网站功能](#网站功能)
 - [参与贡献](#参与贡献)
-- [本地运行](#本地运行)
-- [部署](#部署)
+- [在其他学校使用](#在其他学校使用)
 - [致谢](#致谢)
 - [许可](#许可)
 
@@ -105,55 +104,11 @@
 - **涉及老师只写公开信息**（研究方向、实验室、官方主页、进组经历），不写评分、评价或传闻。
 - **投稿即同意**以 [CC BY-SA 4.0](LICENSE-CONTENT.md) 许可发布，并确认内容和图片是你自己的或已获授权。
 
-## 本地运行
+## 在其他学校使用
 
-需要 Node.js 20 或更高版本。
+本校同学**不需要自己部署**——投稿、纠错、提问直接在网站和本仓库完成即可。
 
-```bash
-git clone https://github.com/K1nesss/Awesome-jmu-cec.git
-cd Awesome-jmu-cec
-npm install
-npm run dev        # 本地预览：http://localhost:5173
-```
-
-| 命令 | 作用 |
-| --- | --- |
-| `npm run dev` | 开发预览，改文章实时刷新（新增文件后重启才会进侧栏） |
-| `npm run build` | 检查 frontmatter 与图片，然后构建到 `docs/.vitepress/dist` |
-| `npm test` | 运行测试（搜索分词、日历、地图数据等） |
-| `npm run map:build` | 更新 OpenStreetMap 数据后，重新生成校园地图数据 |
-
-<details>
-<summary>目录结构</summary>
-
-```
-docs/
-├─ <板块>/            每个板块一个目录：index.md 是板块首页，其余 .md 是文章
-│  └─ experiences/    经验帖
-├─ calendar/          重要日期（events.yaml）
-├─ map/               校园地图（places.yaml 是人工修正）
-├─ questions/         问答页
-├─ contribute/        投稿指南
-├─ public/            图标、分享图、地图数据等静态文件
-└─ .vitepress/        站点配置与主题（组件、样式、数据加载）
-data/osm/             校园地图的 OpenStreetMap 原始数据
-scripts/              侧栏生成、构建检查、地图数据转换等脚本
-templates/            投稿模板
-tests/                测试
-```
-
-</details>
-
-## 部署
-
-网站托管在 [Cloudflare Pages](https://pages.cloudflare.com/)：推送到 `main` 后自动构建（构建命令 `npm ci && npm run build`，输出目录 `docs/.vitepress/dist`），Pull Request 有预览部署。
-
-| 配置 | 位置 | 用途 |
-| --- | --- | --- |
-| `GITHUB_READ_TOKEN` | Cloudflare Pages 环境变量 | 构建时读取问答与贡献者（只读令牌） |
-| `CLOUDFLARE_DEPLOY_HOOK` | GitHub 仓库 Secret | 有人提问或关闭提问时触发重新构建 |
-
-Web Analytics 在 Cloudflare 后台开启，不使用 Cookie。
+如果你想为自己的学校或学院搭一个同类网站，本地运行、改造清单和部署步骤见 **[DEPLOYMENT.md](DEPLOYMENT.md)**。
 
 ## 致谢
 
