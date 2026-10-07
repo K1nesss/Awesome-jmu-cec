@@ -340,6 +340,8 @@ Plan A 本方案；Plan B 升级破坏内置搜索时自维护官方搜索组件
 
 > **内容状态提示（2026-10）**：首页板块目录显示每个板块的文章数或「征稿中」；顶栏下拉与手机菜单里没有文章的板块文字变淡并带「征稿中」标签（`countArticles`，构建时统计）；首页开场右侧「最近更新」列出最近 5 篇（时间取 git 最后提交，拿不到时退回文件修改时间，按北京时间显示）。
 
+> **重要日期（2026-10）**：数据在 `docs/calendar/events.yaml`（只收有官方来源的日期；未正式公布的写 `tentative`，不显示倒计时、不写进订阅），页面 `/calendar/`（`EventCalendar.vue`：按板块筛选、按月分组、倒计时按北京时间、已结束自动折叠、单条「加入日历」），首页搜索框下方「下一个节点」，构建时写出 `/calendar.ics` 供订阅（前一天与三天前 9:00 提醒；`docs/public/_headers` 声明 text/calendar）。解析与 .ics 生成在 `scripts/calendar.mjs`、`scripts/ics.mjs`，含单元测试；verify-build 检查 calendar.ics。
+
 净贡献成本：**在已有目录新增/更新文章 = 一个 .md，零配置编辑**；只有新增顶级板块才需要维护者加一行 nav + 建目录 + index.md。
 
 ### 6.3 顶部导航（写死一次）

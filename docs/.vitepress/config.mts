@@ -2,7 +2,10 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
 import { cjkTokenize } from './search/cjkTokenize.mjs'
 import { GROUPS, SECTIONS } from './sections'
+import { writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { countArticles, genSidebar } from '../../scripts/gen-sidebar.mjs'
+import { loadEvents, toICS } from '../../scripts/calendar.mjs'
 
 // 站点部署基路径：Cloudflare Pages 根路径托管，固定 '/'（2026-10 起主托管，见 PLAN.md §8.7）
 // 若回退 GitHub Pages 项目页：改回 '/Awesome-jmu-cec/'，并同步 verify-build.mjs 的 STALE_BASE
@@ -45,6 +48,13 @@ export default defineConfig({
         },
       ],
     },
+  },
+
+  // 构建结束后写出日历订阅文件 /calendar.ics（数据来自 docs/calendar/events.yaml；日期未公布的条目不写入）
+  buildEnd(siteConfig) {
+    const { events, warnings } = loadEvents(join(DOCS_DIR, 'calendar', 'events.yaml'))
+    for (const w of warnings) console.warn(`⚠️ 重要日期：${w}`)
+    writeFileSync(join(siteConfig.outDir, 'calendar.ics'), toICS(events))
   },
 
   // head 条目不会自动补 base（PLAN.md §12-1），手动拼接
@@ -116,6 +126,7 @@ export default defineConfig({
         items: g.sections.map(({ text, link, key }) => ({ text: navLabel(text, key), link })),
         activeMatch: `^/(${g.sections.map((x) => x.key).join('|')})/`,
       })),
+      { text: '日历', link: '/calendar/' },
       { text: '投稿', link: '/contribute/' },
       { text: '关于', link: '/about/' },
     ],

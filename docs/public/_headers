@@ -1,0 +1,5 @@
+# Cloudflare Pages 响应头配置（部署时生效）
+# 日历订阅文件：声明为日历类型，日历应用才能正确识别；缓存 1 小时，更新后较快同步
+/calendar.ics
+  Content-Type: text/calendar; charset=utf-8
+  Cache-Control: public, max-age=3600

@@ -29,6 +29,9 @@ function walk(dir, out = []) {
 }
 
 if (!existsSync(join(DIST, 'index.html'))) fail('dist/index.html 不存在（构建未产出）')
+// 日历订阅文件（config.mts 的 buildEnd 写出）
+const ics = existsSync(join(DIST, 'calendar.ics')) ? readFileSync(join(DIST, 'calendar.ics'), 'utf8') : ''
+if (!ics.startsWith('BEGIN:VCALENDAR') || !ics.includes('END:VCALENDAR')) fail('dist/calendar.ics 不存在或格式不对')
 
 // 资源引用检查放在 HTML 上：base 为 '/' 时 HTML 用绝对路径 /assets/，JS chunk 之间是相对引用
 let assetRefs = 0
@@ -55,4 +58,4 @@ for (const kw of KEYWORDS) {
   if (missing.length) fail(`搜索索引缺少关键词「${kw}」的词元：${missing.join('、')}`)
 }
 const extra = KEYWORDS.length ? `、关键词 ${KEYWORDS.length} 项全部命中` : ''
-console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在${extra}`)
+console.log(`✅ verify-build：dist 存在、无残留旧 base、资源引用正常、搜索索引存在、日历订阅文件正常${extra}`)

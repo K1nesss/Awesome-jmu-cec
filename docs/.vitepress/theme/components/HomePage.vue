@@ -1,10 +1,24 @@
 <script setup lang="ts">
 // 首页（docs/index.md 使用 layout: page 并只渲染本组件）
 // 结构：开场 + 搜索入口（右侧最近更新）→ 四年路线（本页的视觉重心）→ 全部板块目录（按三个大类分栏）→ 投稿号召
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { withBase } from 'vitepress'
 import { GROUPS, sectionByKey } from '../../sections'
 import { data as articles } from '../articles.data'
+import { data as calendar } from '../events.data'
+import { statusOf, statusText } from '../calendar'
+
+// 下一个节点：最近一个尚未结束、且日期已确定的事件（日历页的第一项）
+// 首次渲染用构建时间，挂载后换成浏览器当前时间，避免服务端与浏览器渲染不一致
+const now = ref(calendar.builtAt)
+onMounted(() => (now.value = Date.now()))
+const nextEvent = computed(() => {
+  for (const e of calendar.events) {
+    const s = statusOf(e, now.value)
+    if (s.kind !== 'past' && s.kind !== 'tentative') return { e, text: statusText(s), urgent: s.kind !== 'upcoming' || s.days <= 7 }
+  }
+  return null
+})
 
 // 每个板块的文章数（目录里显示「N 篇」或「征稿中」）
 const counts = computed(() => {
@@ -83,6 +97,12 @@ function openSearch() {
             <span class="search-text">搜索保研、竞赛、转专业……</span>
             <kbd class="search-key">Ctrl K</kbd>
           </button>
+          <a v-if="nextEvent" class="next" :class="{ urgent: nextEvent.urgent }" :href="withBase('/calendar/')">
+            <span class="next-label">下一个节点</span>
+            <span class="next-title">{{ nextEvent.e.title }}</span>
+            <span class="next-when">{{ nextEvent.text }}</span>
+            <svg class="next-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          </a>
         </div>
 
         <!-- 最近更新 -->
@@ -273,6 +293,55 @@ function openSearch() {
 
 @media (max-width: 639px) {
   .search-key { display: none; }
+}
+
+/* 下一个节点：搜索框下方一行，链接到重要日期页 */
+.next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 16px;
+  max-width: 560px;
+  padding: 10px 2px;
+  font-size: 14px;
+  color: var(--home-muted);
+}
+
+.next-label {
+  padding: 1px 8px;
+  border: 1px solid var(--home-rule);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--vp-c-text-3);
+}
+
+.next-title {
+  font-weight: 600;
+  color: var(--home-ink);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s;
+}
+
+.next:hover .next-title {
+  text-decoration-color: currentColor;
+}
+
+.next.urgent .next-when {
+  font-weight: 600;
+  color: var(--home-ink);
+}
+
+.next-arrow {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* 开场两栏：左侧标题与搜索，右侧最近更新（< 960px 时上下排列） */

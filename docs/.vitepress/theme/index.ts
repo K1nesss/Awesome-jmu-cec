@@ -3,6 +3,7 @@ import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import HomePage from './components/HomePage.vue'
 import ArticleList from './components/ArticleList.vue'
+import EventCalendar from './components/EventCalendar.vue'
 import ArticleMeta from './components/ArticleMeta.vue'
 import SectionNav from './components/SectionNav.vue'
 import ReadingAids from './components/ReadingAids.vue'
@@ -25,5 +26,6 @@ export default {
   enhanceApp({ app }) {
     app.component('HomePage', HomePage) // 首页
     app.component('ArticleList', ArticleList) // 板块首页的文章列表
+    app.component('EventCalendar', EventCalendar) // 重要日期页面
   },
 } satisfies Theme

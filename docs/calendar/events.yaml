@@ -1,0 +1,60 @@
+# ============================================================
+# 重要日期（「重要日期」页面、首页「下一个节点」、日历订阅 calendar.ics 都读这个文件）
+#
+# 每一项的写法：
+#   - title: 事件名称（必填）
+#     date: 2026-10-15          开始日期（必填，年-月-日）
+#     end: 2026-10-24           结束日期（可选，单日事件不写）
+#     category: kaoyan          所属板块目录名（可选，见投稿页「板块与目录对照」）
+#     note: 补充说明            （可选）
+#     source: https://...       官方来源链接（强烈建议填写）
+#     tentative: 预计 10 月中旬  日期还没正式公布时填写：页面显示这段文字、不显示倒计时，也不会写进日历订阅
+#
+# 规则：只写有官方来源的日期；学校、学院自定的日期请附上通知链接。过期的条目不用删，页面会自动收进「已结束」。
+# ============================================================
+
+- title: 2027 考研预报名
+  date: 2026-10-09
+  end: 2026-10-12
+  category: kaoyan
+  note: 每日 9:00—22:00，在中国研究生招生信息网（研招网）进行。
+  source: https://yz.chsi.com.cn/
+
+- title: 2027 考研正式网上报名
+  date: 2026-10-15
+  end: 2026-10-24
+  category: kaoyan
+  note: 每日 9:00—22:00。所有考生须在规定时间内完成报名，逾期不得补办。
+  source: https://yz.chsi.com.cn/
+
+- title: 2027 年度国考：发布公告、开始报名
+  date: 2026-10-15
+  category: kaogong
+  tentative: 尚未公布，往年在 10 月中旬
+  note: 公告发布后会更新为准确日期。
+  source: http://www.scs.gov.cn/
+
+- title: 英语四级口语考试（CET-SET4）
+  date: 2026-11-21
+  category: campus
+  note: 具体时间以准考证为准。
+  source: https://cet.neea.edu.cn/xhtml1/report/2609/1-1.htm
+
+- title: 英语六级口语考试（CET-SET6）
+  date: 2026-11-22
+  category: campus
+  note: 具体时间以准考证为准。
+  source: https://cet.neea.edu.cn/xhtml1/report/2609/1-1.htm
+
+- title: 英语四、六级笔试
+  date: 2026-12-12
+  category: campus
+  note: 四级 9:00—11:20，六级 15:00—17:25。报名时间各校不同，以学校教务通知为准。
+  source: https://cet.neea.edu.cn/xhtml1/report/2609/1-1.htm
+
+- title: 2027 考研初试
+  date: 2026-12-19
+  end: 2026-12-20
+  category: kaoyan
+  note: 具体考试科目安排以准考证和研招网通知为准。
+  source: https://yz.chsi.com.cn/
